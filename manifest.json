@@ -1,0 +1,29 @@
+{
+  "name": "AI-chat-beat",
+  "description": "AI chat frequency logging",
+  "version": "1.0",
+  "manifest_version": 3,
+  "host_permissions": ["https://chat.deepseek.com/*"],
+  "background": {
+    "type": "module",
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://chat.deepseek.com/*"],
+      "js": ["content-script.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    { "resources": ["injected.js"], "matches": ["https://chat.deepseek.com/*"] }
+  ],
+  "action": {
+    "default_icon": "icon.png",
+    "default_popup": "hello.html"
+  },
+  "permissions": ["unlimitedStorage"],
+  "storage": {
+    "managed_schema": "schema.json"
+  }
+}

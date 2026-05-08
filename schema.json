@@ -1,0 +1,29 @@
+{
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "array",
+      "id": "AIChatHistory",
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "integer"
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string"
+          },
+          "index": {
+            "type": "string"
+          },
+          "prompt": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
