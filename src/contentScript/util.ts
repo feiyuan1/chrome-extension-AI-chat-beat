@@ -22,15 +22,16 @@ export const handleStoreFailed = (err: unknown, message: Message) => {
  */
 export const syncBundleInfo = () => {
   setTimeout(() => {
-    chrome.runtime
-      .sendMessage({
-        type: 'GET_BUNDLE_TIMESTAMP',
-      })
-      .then(() => {
-        log('extension version updated or initialized')
-      })
-      .catch(() => {
-        log('extension version outdated')
-      })
-  }, 5000)
+    try {
+      chrome.runtime
+        .sendMessage({
+          type: 'GET_BUNDLE_TIMESTAMP',
+        })
+        .then(() => {
+          log('extension version updated or initialized')
+        })
+    } catch (err) {
+      log('extension version outdated')
+    }
+  }, 2000)
 }
