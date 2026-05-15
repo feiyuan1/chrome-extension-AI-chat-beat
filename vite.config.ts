@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
       outDir: 'build',
       rollupOptions: {
         input: {
-          injected: 'src/contentScript/injected.js',
+          injected: 'src/contentScript/injected.ts',
         },
         output: {
           entryFileNames: '[name].js',

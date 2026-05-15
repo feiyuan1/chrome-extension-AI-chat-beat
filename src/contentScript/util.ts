@@ -6,6 +6,7 @@ import { getLocalStorage, setLocalStorage } from '../utils/localStorage'
 export function injectScript() {
   const script = document.createElement('script')
   script.src = chrome.runtime.getURL('./injected.js')
+  script.type = 'module'
   script.onload = () => script.remove()
   ;(document.head || document.documentElement).appendChild(script)
 }
