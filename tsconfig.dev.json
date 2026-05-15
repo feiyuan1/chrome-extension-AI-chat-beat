@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "esnext",
+    "outDir": "build-dev-server",
+    "skipLibCheck": true
+  },
+  "include": ["scripts"],
+  "exclude": ["**/**.d.ts"]
+}

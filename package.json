@@ -1,11 +1,40 @@
 {
-  "name": "ai-chat-beat",
+  "name": "ai_chat_beat",
+  "displayName": "ai_chat_beat",
   "version": "1.0.0",
-  "description": "",
-  "main": "background.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "author": "no one",
+  "description": "AI chat frequency logging",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "chrome-extension",
+    "vanilla",
+    "vite",
+    "create-chrome-ext"
+  ],
+  "engines": {
+    "node": ">=14.18.0"
   },
-  "author": "",
-  "license": "ISC"
+  "scripts": {
+    "dev:client": "npx nodemon --watch src --watch popup.html --ext ts,js,json,png --delay 5 --exec npm run build",
+    "dev:server": "npx shx rm -rf build-dev-server/ && tsc -p tsconfig.dev.json && npx shx mv build-dev-server/scripts/dev-server.js build-dev-server/scripts/dev-server.mjs && node build-dev-server/scripts/dev-server.mjs",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "fmt": "prettier --write '**/*.{ts,json,css,scss,md}'",
+    "zip": "npm run build && node src/zip.js"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.0.0-beta.26",
+    "@types/chokidar": "^2.1.7",
+    "@types/chrome": "^0.0.246",
+    "@types/ws": "^8.18.1",
+    "chokidar": "^5.0.0",
+    "gulp": "^5.0.0",
+    "gulp-zip": "^6.0.0",
+    "prettier": "^3.0.3",
+    "rollup": "^4.60.3",
+    "typescript": "^5.2.2",
+    "vite": "^5.4.10",
+    "ws": "^8.20.0"
+  }
 }
