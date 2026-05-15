@@ -36,3 +36,24 @@ export const syncBundleInfo = () => {
     }
   }, 2000)
 }
+
+export function isAIChatRequest(url: string | URL) {
+  const path = typeof url === 'string' ? url : url.pathname
+  return (
+    path.includes('/api/v0/chat/completion') ||
+    // url.includes("/api/v0/chat_session/fetch_page") ||
+    path.includes('/api/v0/chat/edit_message')
+  )
+}
+
+// function isFetchPage(url: string) {
+//   return url.includes('/api/v0/chat_session/fetch_page')
+// }
+
+export const globalErrorBoundary = (fn: () => void) => {
+  try {
+    fn()
+  } catch (err) {
+    consoleError('globalErrorBoundary', err)
+  }
+}
