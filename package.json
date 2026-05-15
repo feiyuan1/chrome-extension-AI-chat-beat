@@ -16,7 +16,7 @@
     "node": ">=14.18.0"
   },
   "scripts": {
-    "dev:client": "npx nodemon --watch src --watch popup.html --ext ts,js,json,png --delay 5 --exec npm run build",
+    "dev:client": "npx nodemon --watch src --watch popup.html --ext ts,js,json,png --delay 3 --exec npm run build",
     "dev:server": "npx shx rm -rf build-dev-server/ && tsc -p tsconfig.dev.json && npx shx mv build-dev-server/scripts/dev-server.js build-dev-server/scripts/dev-server.mjs && node build-dev-server/scripts/dev-server.mjs",
     "build": "tsc && vite build",
     "preview": "vite preview",
