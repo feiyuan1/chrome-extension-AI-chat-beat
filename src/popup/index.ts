@@ -1,3 +1,4 @@
+import { TargetEnum } from '../types'
 import { log } from '../utils/debugger'
 
 const createExportCoreAnchorElement = function () {
@@ -39,13 +40,12 @@ const exportFullData = function () {
 }
 
 const createCoreInput = function () {
-  const label = document.createElement('label')
-  label.innerText = 'sync core data'
-  const input = document.createElement('input')
-  input.type = 'file'
+  const input = document.getElementById('sync-core-data')
+  if (!input) {
+    throw new Error('cannot find sync-core-data input')
+  }
+
   input.onchange = syncCoreData
-  document.body.appendChild(label)
-  document.body.appendChild(input)
 }
 
 const syncCoreData = function (event: Event) {
@@ -63,9 +63,26 @@ const syncCoreData = function (event: Event) {
       return
     }
     alert('读取成功')
-    chrome.storage.local.set({ coreChatHistory: { data: JSON.parse(coreData) } }).then(() => {
-      alert('AIChatBeat sync success')
-    })
+    chrome.storage.local
+      .get(TargetEnum.coreChatHistory)
+      .then((result) => {
+        return result.coreChatHistory?.data
+      })
+      .then((coreChatHistory) => {
+        if (coreChatHistory && coreChatHistory.length > 0) {
+          return window.confirm(
+            `当前已有存储数据，最新数据的 index: ${coreChatHistory.at(-1).index}，确认要覆盖吗？`,
+          )
+        }
+        return true
+      })
+      .then((canSync) => {
+        if (canSync) {
+          chrome.storage.local.set({ coreChatHistory: { data: JSON.parse(coreData) } }).then(() => {
+            alert('AIChatBeat sync success')
+          })
+        }
+      })
   }
 
   reader.readAsText(file)
