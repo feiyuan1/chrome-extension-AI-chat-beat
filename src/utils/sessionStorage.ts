@@ -1,5 +1,5 @@
-import { STORAGE_KEY } from '../constants'
-import { SessionStorageData, SessionStoragekeys } from '../types/sessionStorage'
+// import { STORAGE_KEY } from '../constants'
+// import { SessionStorageData, SessionStoragekeys } from '../types/sessionStorage'
 
 // export const getSessionStorage = <Key extends SessionStoragekeys>(key: Key) => {
 //   const data = sessionStorage.getItem(STORAGE_KEY)

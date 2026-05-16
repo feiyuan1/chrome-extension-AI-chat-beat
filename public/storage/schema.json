@@ -2,56 +2,46 @@
   "type": "object",
   "properties": {
     "coreCacheHistory": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "array",
-          "id": "coreCacheHistory",
-          "items": {
-            "type": "object",
-            "properties": {
-              "timestamp": {
-                "type": "integer"
-              },
-              "session_id": {
-                "type": "string"
-              },
-              "platform": {
-                "type": "string"
-              },
-              "index": {
-                "type": "string"
-              }
-            }
+      "type": "array",
+      "id": "coreCacheHistory",
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "integer"
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string"
+          },
+          "index": {
+            "type": "string"
           }
         }
       }
     },
     "fullCacheHistory": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "array",
-          "id": "fullCacheHistory",
-          "items": {
-            "type": "object",
-            "properties": {
-              "timestamp": {
-                "type": "integer"
-              },
-              "session_id": {
-                "type": "string"
-              },
-              "platform": {
-                "type": "string"
-              },
-              "index": {
-                "type": "string"
-              },
-              "prompt": {
-                "type": "string"
-              }
-            }
+      "type": "array",
+      "id": "fullCacheHistory",
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "integer"
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string"
+          },
+          "index": {
+            "type": "string"
+          },
+          "prompt": {
+            "type": "string"
           }
         }
       }

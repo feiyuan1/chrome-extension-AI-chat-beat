@@ -5,6 +5,7 @@ export enum WINDOW_MESSAGE_TYPE {
 
 export enum CHROME_MESSAGE_TYPE {
   NEW_CHAT_REQUEST = 'NEW_CHAT_REQUEST',
+  BATCH_CHAT_REQUESTS = 'BATCH_CHAT_REQUESTS',
   AI_CHAT_SESSION_MAP = 'AI_CHAT_SESSION_MAP',
 }
 
@@ -16,11 +17,12 @@ export interface Payload {
   prompt: string
   timestamp: number
   platform: Platform
+  index: string
 }
 
 export interface Message {
   type: CHROME_MESSAGE_TYPE
-  payload: Payload
+  payload: any
 }
 
 export enum TargetEnum {
@@ -32,7 +34,13 @@ export enum TargetEnum {
 export interface StoreChromeLocalError {
   message: unknown
 }
+
+export interface ResponseData {
+  fullChatHistoryLength?: number
+}
+
 export interface StoreChromeLocalResponse {
   code: number
   message?: unknown
+  data: ResponseData
 }

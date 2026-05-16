@@ -25,7 +25,7 @@ export const startWsClient = () => {
     consoleError('ERROR', error)
   }
 
-  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (message.type === 'GET_BUNDLE_TIMESTAMP') {
       log('sw timestamp: ', timeStamp)
       sendResponse(timeStamp)

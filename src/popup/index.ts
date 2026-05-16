@@ -12,7 +12,7 @@ const createExportCoreAnchorElement = function () {
 const exportCoreData = function () {
   const a = createExportCoreAnchorElement()
   chrome.storage.local.get(['coreChatHistory'], (result) => {
-    const coreData = result.coreChatHistory?.data || []
+    const coreData = result.coreChatHistory || []
     log('export coreChatHistory', coreData)
     const blob = new Blob([JSON.stringify(coreData)], { type: 'application/json' })
     a.href = URL.createObjectURL(blob)
@@ -31,7 +31,7 @@ const createExportFullAnchorElement = function () {
 const exportFullData = function () {
   const a = createExportFullAnchorElement()
   chrome.storage.local.get(['fullChatHistory'], (result) => {
-    const fullData = result.fullChatHistory?.data || []
+    const fullData = result.fullChatHistory || []
     log('export fullChatHistory', fullData)
     const blob = new Blob([JSON.stringify(fullData)], { type: 'application/json' })
     a.href = URL.createObjectURL(blob)
@@ -66,7 +66,7 @@ const syncCoreData = function (event: Event) {
     chrome.storage.local
       .get(TargetEnum.coreChatHistory)
       .then((result) => {
-        return result.coreChatHistory?.data
+        return result.coreChatHistory
       })
       .then((coreChatHistory) => {
         if (coreChatHistory && coreChatHistory.length > 0) {
@@ -78,7 +78,7 @@ const syncCoreData = function (event: Event) {
       })
       .then((canSync) => {
         if (canSync) {
-          chrome.storage.local.set({ coreChatHistory: { data: JSON.parse(coreData) } }).then(() => {
+          chrome.storage.local.set({ coreChatHistory: JSON.parse(coreData) }).then(() => {
             alert('AIChatBeat sync success')
           })
         }

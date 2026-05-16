@@ -1,9 +1,17 @@
 import { CHROME_MESSAGE_TYPE, Message, WINDOW_MESSAGE_TYPE } from '../types'
-import { globalErrorBoundary, handleStoreFailed, injectScript, syncBundleInfo } from './util'
+import { createIndex } from '../utils'
+import {
+  globalErrorBoundary,
+  handleStoreChatMessage,
+  injectScript,
+  reStoreMessages,
+  syncBundleInfo,
+} from './util'
 
 const innerScript = () => {
   injectScript()
   syncBundleInfo()
+  reStoreMessages()
 
   // 监听来自 injected 的消息，转发给 background
   window.addEventListener('message', (event) => {
@@ -14,6 +22,7 @@ const innerScript = () => {
         payload: event.data.payload.response,
       }
       chrome.runtime.sendMessage(message)
+      return
     }
 
     if (event.data?.type === WINDOW_MESSAGE_TYPE.AI_CHAT_REQUEST) {
@@ -29,18 +38,10 @@ const innerScript = () => {
           platform,
           timestamp,
           session_id: chat_session_id,
+          index: createIndex(),
         },
       }
-      try {
-        chrome.runtime.sendMessage(message).then((response) => {
-          if (response.code != 500) {
-            return
-          }
-          handleStoreFailed(response.message, message)
-        })
-      } catch (err) {
-        handleStoreFailed(err, message)
-      }
+      handleStoreChatMessage(message)
     }
   })
 }

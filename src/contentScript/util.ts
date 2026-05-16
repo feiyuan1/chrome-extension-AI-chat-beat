@@ -1,7 +1,8 @@
-import { Message } from '../types'
+import { FULL_CHAT_MAX_LENGTH } from '../constants'
+import { CHROME_MESSAGE_TYPE, Message, StoreChromeLocalResponse } from '../types'
 import { LocalStoragekeys } from '../types/LocalStorage'
 import { consoleError, log } from '../utils/debugger'
-import { getLocalStorage, setLocalStorage } from '../utils/localStorage'
+import { getLocalStorage, removeLocalStorageKey, setLocalStorage } from '../utils/localStorage'
 
 export function injectScript() {
   const script = document.createElement('script')
@@ -11,10 +12,30 @@ export function injectScript() {
   ;(document.head || document.documentElement).appendChild(script)
 }
 
+export const handleStoreChatMessage = (message: Message, thenCallback?: () => void) => {
+  try {
+    chrome.runtime.sendMessage(message).then((response: StoreChromeLocalResponse) => {
+      if (response.code === 200) {
+        thenCallback?.()
+        const fullChatHistoryLength = response?.data?.fullChatHistoryLength
+        if (fullChatHistoryLength && fullChatHistoryLength >= FULL_CHAT_MAX_LENGTH) {
+          alert(`fulldata 已经积累 ${fullChatHistoryLength} 条`)
+        }
+        return
+      }
+      if (response.code === 500) {
+        handleStoreFailed(response.message, message)
+        return
+      }
+    })
+  } catch (err) {
+    handleStoreFailed(err, message)
+  }
+}
 export const handleStoreFailed = (err: unknown, message: Message) => {
   consoleError(err)
   const oldMessageList = getLocalStorage(LocalStoragekeys.unStoredMessageList) || []
-  setLocalStorage(LocalStoragekeys.unStoredMessageList, oldMessageList.concat(message))
+  setLocalStorage(LocalStoragekeys.unStoredMessageList, oldMessageList.concat(message.payload))
 }
 
 // TODO DEV only
@@ -57,4 +78,21 @@ export const globalErrorBoundary = (fn: () => void) => {
   } catch (err) {
     consoleError('globalErrorBoundary', err)
   }
+}
+
+export const reStoreMessages = () => {
+  const messages = getLocalStorage(LocalStoragekeys.unStoredMessageList)
+  if (!messages?.length) {
+    return
+  }
+
+  handleStoreChatMessage(
+    {
+      type: CHROME_MESSAGE_TYPE.BATCH_CHAT_REQUESTS,
+      payload: messages,
+    },
+    () => {
+      removeLocalStorageKey(LocalStoragekeys.unStoredMessageList)
+    },
+  )
 }

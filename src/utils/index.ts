@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid'
+
 export const createIndex = function () {
-  return String(Math.floor(Math.random() * 1000))
+  return uuidv4()
 }
