@@ -1,5 +1,6 @@
+import { Platform, WINDOW_MESSAGE_TYPE } from '../types'
 import { log } from '../utils/debugger'
-import { globalErrorBoundary, isAIChatRequest } from './util'
+import { globalErrorBoundary, isAIChatRequest, isFetchPage } from './util'
 
 const innerScript = () => {
   log('injected')
@@ -7,37 +8,43 @@ const innerScript = () => {
   // 拦截 XMLHttpRequest
   const originalSend = XMLHttpRequest.prototype.send
   XMLHttpRequest.prototype.send = function (body: XMLHttpRequestBodyInit | null | undefined) {
-    // if (isFetchPage(this._url)) {
-    //   console.log("AIChatBeat", "fetch page request", this._url);
-    //   this.addEventListener("load", function () {
-    //     window.postMessage(
-    //       {
-    //         type: "AI_CHAT_REQUEST",
-    //         payload: {
-    //           body,
-    //           timestamp: Date.now(),
-    //           response: JSON.parse(this.responseText),
-    //         },
-    //       },
-    //       "*",
-    //     );
-    //   });
-    // }
+    if (!this._url) {
+      return originalSend.call(this, body)
+    }
 
-    if (this._url && isAIChatRequest(this._url) && body && typeof body === 'string') {
+    if (isFetchPage(this._url)) {
+      log('fetch page request', this._url)
+      this.addEventListener('load', function () {
+        const response = JSON.parse(this.responseText)
+        if (response.code === 0) {
+          window.postMessage(
+            {
+              type: 'AI_CHAT_SESSION_MAP',
+              payload: {
+                response: response.data.biz_data.chat_sessions.slice(0, 20),
+              },
+            },
+            '*',
+          )
+        }
+      })
+    }
+
+    if (isAIChatRequest(this._url) && body && typeof body === 'string') {
       log('target request', this._url)
       window.postMessage(
         {
-          type: 'AI_CHAT_REQUEST',
+          type: WINDOW_MESSAGE_TYPE.AI_CHAT_REQUEST,
           payload: {
             body: JSON.parse(body),
             timestamp: Date.now(),
-            platform: 'deepseek',
+            platform: Platform.deepseek,
           },
         },
         '*',
       )
     }
+
     return originalSend.call(this, body)
   }
 

@@ -1,12 +1,20 @@
-import { StoreChromeLocalResponse, TargetEnum } from '../types'
+import { CHROME_MESSAGE_TYPE, Message, StoreChromeLocalResponse, TargetEnum } from '../types'
 import { createIndex } from '../utils'
 import { log } from '../utils/debugger'
 import { startWsClient } from './dev-client'
 
 startWsClient()
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === 'NEW_CHAT_REQUEST') {
+chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) => {
+  if (message.type === CHROME_MESSAGE_TYPE.AI_CHAT_SESSION_MAP) {
+    chrome.storage.local.set({
+      [TargetEnum.sessionMap]: message.payload,
+    })
+
+    return
+  }
+
+  if (message.type === CHROME_MESSAGE_TYPE.NEW_CHAT_REQUEST) {
     const { session_id, prompt, timestamp, platform } = message.payload
 
     const index = createIndex()
@@ -27,11 +35,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.storage.local
       .get([TargetEnum.coreChatHistory, TargetEnum.fullChatHistory])
       .then((result) => {
-        const coreData = result.coreChatHistory?.data || []
-        const fullData = result.fullChatHistory?.data || []
+        const coreData = result[TargetEnum.coreChatHistory]?.data || []
+        const fullData = result[TargetEnum.fullChatHistory]?.data || []
         return chrome.storage.local.set({
-          coreChatHistory: { data: coreData.concat(coreDataItem) },
-          fullChatHistory: { data: fullData.concat(dataItem) },
+          [TargetEnum.coreChatHistory]: { data: coreData.concat(coreDataItem) },
+          [TargetEnum.fullChatHistory]: { data: fullData.concat(dataItem) },
         })
       })
       .catch((error) => {
