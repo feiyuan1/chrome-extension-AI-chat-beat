@@ -4,7 +4,6 @@ export enum WINDOW_MESSAGE_TYPE {
 }
 
 export enum CHROME_MESSAGE_TYPE {
-  NEW_CHAT_REQUEST = 'NEW_CHAT_REQUEST',
   BATCH_CHAT_REQUESTS = 'BATCH_CHAT_REQUESTS',
   AI_CHAT_SESSION_MAP = 'AI_CHAT_SESSION_MAP',
 }
@@ -12,7 +11,7 @@ export enum CHROME_MESSAGE_TYPE {
 export enum Platform {
   deepseek = 'deepseek',
 }
-export interface Payload {
+export interface StorePayload {
   session_id: string
   prompt: string
   timestamp: number
@@ -20,9 +19,19 @@ export interface Payload {
   index: string
 }
 
-export interface Message {
+export interface StoreMessage {
   type: CHROME_MESSAGE_TYPE
-  payload: any
+  payload: StorePayload[]
+}
+
+export interface SessionMapItem {
+  id: string
+  title: string
+}
+
+export interface SessionMapMessage {
+  type: CHROME_MESSAGE_TYPE
+  payload: SessionMapItem[]
 }
 
 export enum TargetEnum {

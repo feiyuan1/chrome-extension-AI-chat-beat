@@ -1,5 +1,5 @@
 import { FULL_CHAT_MAX_LENGTH } from '../constants'
-import { CHROME_MESSAGE_TYPE, Message, StoreChromeLocalResponse } from '../types'
+import { CHROME_MESSAGE_TYPE, StoreMessage, StoreChromeLocalResponse } from '../types'
 import { LocalStoragekeys } from '../types/LocalStorage'
 import { consoleError, log } from '../utils/debugger'
 import { getLocalStorage, removeLocalStorageKey, setLocalStorage } from '../utils/localStorage'
@@ -12,7 +12,7 @@ export function injectScript() {
   ;(document.head || document.documentElement).appendChild(script)
 }
 
-export const handleStoreChatMessage = (message: Message, thenCallback?: () => void) => {
+export const handleStoreChatMessage = (message: StoreMessage, thenCallback?: () => void) => {
   try {
     chrome.runtime.sendMessage(message).then((response: StoreChromeLocalResponse) => {
       if (response.code === 200) {
@@ -32,7 +32,7 @@ export const handleStoreChatMessage = (message: Message, thenCallback?: () => vo
     handleStoreFailed(err, message)
   }
 }
-export const handleStoreFailed = (err: unknown, message: Message) => {
+export const handleStoreFailed = (err: unknown, message: StoreMessage) => {
   consoleError(err)
   const oldMessageList = getLocalStorage(LocalStoragekeys.unStoredMessageList) || []
   setLocalStorage(LocalStoragekeys.unStoredMessageList, oldMessageList.concat(message.payload))

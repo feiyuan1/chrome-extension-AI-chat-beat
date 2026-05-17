@@ -1,4 +1,4 @@
-import { CHROME_MESSAGE_TYPE, Message, WINDOW_MESSAGE_TYPE } from '../types'
+import { CHROME_MESSAGE_TYPE, StoreMessage, SessionMapMessage, WINDOW_MESSAGE_TYPE } from '../types'
 import { createIndex } from '../utils'
 import {
   globalErrorBoundary,
@@ -17,7 +17,7 @@ const innerScript = () => {
   window.addEventListener('message', (event) => {
     if (event.source !== window) return
     if (event.data?.type === WINDOW_MESSAGE_TYPE.AI_CHAT_SESSION_MAP) {
-      const message: Message = {
+      const message: SessionMapMessage = {
         type: CHROME_MESSAGE_TYPE.AI_CHAT_SESSION_MAP,
         payload: event.data.payload.response,
       }
@@ -31,15 +31,17 @@ const innerScript = () => {
         platform,
         timestamp,
       } = event.data.payload
-      const message: Message = {
-        type: CHROME_MESSAGE_TYPE.NEW_CHAT_REQUEST,
-        payload: {
-          prompt,
-          platform,
-          timestamp,
-          session_id: chat_session_id,
-          index: createIndex(),
-        },
+      const message: StoreMessage = {
+        type: CHROME_MESSAGE_TYPE.BATCH_CHAT_REQUESTS,
+        payload: [
+          {
+            prompt,
+            platform,
+            timestamp,
+            session_id: chat_session_id,
+            index: createIndex(),
+          },
+        ],
       }
       handleStoreChatMessage(message)
     }

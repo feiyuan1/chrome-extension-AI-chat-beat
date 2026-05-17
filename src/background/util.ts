@@ -1,7 +1,7 @@
-import { Payload, StoreChromeLocalResponse, TargetEnum } from '../types'
+import { StorePayload, StoreChromeLocalResponse, TargetEnum } from '../types'
 import { log } from '../utils/debugger'
 
-export const handleBatchStore = (data: Payload[], callback: (response: any) => void) => {
+export const handleBatchStore = (data: StorePayload[], callback: (response: any) => void) => {
   const { coreChatHistory, fullChatHistory } = data.reduce<{
     coreChatHistory: any[]
     fullChatHistory: any[]
