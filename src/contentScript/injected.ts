@@ -21,7 +21,7 @@ const innerScript = () => {
             {
               type: 'AI_CHAT_SESSION_MAP',
               payload: {
-                response: response.data.biz_data.chat_sessions.slice(0, 20),
+                response,
               },
             },
             '*',
