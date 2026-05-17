@@ -48,7 +48,7 @@ export const handleBatchStore = (data: StorePayload[], callback: (response: any)
       storeResponse.message = error
     })
     .finally(() => {
-      log('send response')
+      log('handleBatchStore send response')
       callback(storeResponse)
     })
 }
