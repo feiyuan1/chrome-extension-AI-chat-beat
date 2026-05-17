@@ -1,8 +1,8 @@
 import { FULL_CHAT_MAX_LENGTH } from '../constants'
 import { CHROME_MESSAGE_TYPE, StoreMessage, StoreChromeLocalResponse } from '../types'
-import { LocalStoragekeys } from '../types/LocalStorage'
 import { consoleError, log } from '../utils/debugger'
 import { getLocalStorage, removeLocalStorageKey, setLocalStorage } from '../utils/localStorage'
+import { LocalStoragekeys } from '../types/localStorage'
 
 export function injectScript() {
   const script = document.createElement('script')

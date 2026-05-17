@@ -1,5 +1,5 @@
 import { STORAGE_KEY } from '../constants'
-import { LocalStorageData, LocalStoragekeys } from '../types/LocalStorage'
+import { LocalStorageData, LocalStoragekeys } from '../types/localStorage'
 
 export const getLocalStorage = <Key extends LocalStoragekeys>(key: Key) => {
   const data = localStorage.getItem(STORAGE_KEY)
