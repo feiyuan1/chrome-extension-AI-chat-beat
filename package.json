@@ -16,8 +16,15 @@
     "node": ">=14.18.0"
   },
   "scripts": {
+    "dev:all": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "start:monitor": "concurrently \"npm run victoria-metrics\" \"npm run victoria-logs\" \"npm run metrics-proxy\" \"npm run logs-proxy\" \"npm run grafana\"",
     "dev:client": "npx nodemon --watch src --watch popup.html --ext ts,js,json,png --delay 3 --exec npm run build",
     "dev:server": "npx shx rm -rf build-dev-server/ && tsc -p tsconfig.dev.json && npx shx mv build-dev-server/scripts/dev-server.js build-dev-server/scripts/dev-server.mjs && node build-dev-server/scripts/dev-server.mjs",
+    "victoria-metrics": "victoria-metrics --storageDataPath=D:\\app\\victoria-metrics-windows-amd64-v1.118.0\\victoria-metrics-data --retentionPeriod=1y",
+    "victoria-logs": "victoria-logs --storageDataPath=D:\\app\\victoria-logs-windows-amd64-v1.50.0\\victoria-logs-data --retentionPeriod=1y",
+    "metrics-proxy": " npx local-cors-proxy --proxyUrl http://127.0.0.1:8428 --port 8010",
+    "logs-proxy": " npx local-cors-proxy --proxyUrl http://127.0.0.1:9428 --port 8011",
+    "grafana": "grafana server --homepath D:\\app\\grafana\\grafana",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "fmt": "prettier --write '**/*.{ts,json,css,scss,md}'",
@@ -29,6 +36,7 @@
     "@types/chrome": "^0.0.246",
     "@types/ws": "^8.18.1",
     "chokidar": "^5.0.0",
+    "concurrently": "^9.2.1",
     "gulp": "^5.0.0",
     "gulp-zip": "^6.0.0",
     "prettier": "^3.0.3",
