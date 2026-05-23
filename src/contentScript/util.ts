@@ -90,6 +90,7 @@ export const reStoreMessages = () => {
     {
       type: CHROME_MESSAGE_TYPE.BATCH_CHAT_REQUESTS,
       payload: messages,
+      aggregate: false,
     },
     () => {
       removeLocalStorageKey(LocalStoragekeys.unStoredMessageList)

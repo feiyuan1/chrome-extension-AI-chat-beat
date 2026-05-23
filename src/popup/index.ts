@@ -1,4 +1,5 @@
-import { TargetEnum } from '../types'
+import { ReportChatsLogs } from '../adapters/logAdatper'
+import { ReportChats } from '../adapters/MetricAdapter'
 import { log } from '../utils/debugger'
 
 const createExportCoreAnchorElement = function () {
@@ -39,50 +40,33 @@ const exportFullData = function () {
   })
 }
 
-const createCoreInput = function () {
-  const input = document.getElementById('sync-core-data')
+const createReportInput = function () {
+  const input = document.getElementById('report-chat-data')
   if (!input) {
-    throw new Error('cannot find sync-core-data input')
+    throw new Error('cannot find report-chat-data input')
   }
 
-  input.onchange = syncCoreData
+  input.onchange = reportChatData
 }
 
-const syncCoreData = function (event: Event) {
+const reportChatData = function (event: Event) {
   const target = event.target as HTMLInputElement
   const file = target?.files?.[0]
   if (!file) {
-    console.error('sync core data', 'upload no file')
+    console.error('report chat data', 'upload no file')
     return
   }
   const reader = new FileReader()
   reader.onload = function (readEvent) {
-    const coreData = readEvent.target?.result as string
-    if (!coreData) {
-      console.error('sync core data', 'file have no content')
+    const fullData = readEvent.target?.result as string
+    if (!fullData) {
+      console.error('report chat data', 'file have no content')
       return
     }
     alert('读取成功')
-    chrome.storage.local
-      .get(TargetEnum.coreChatHistory)
-      .then((result) => {
-        return result.coreChatHistory
-      })
-      .then((coreChatHistory) => {
-        if (coreChatHistory && coreChatHistory.length > 0) {
-          return window.confirm(
-            `当前已有存储数据，最新数据的 index: ${coreChatHistory.at(-1).index}，确认要覆盖吗？`,
-          )
-        }
-        return true
-      })
-      .then((canSync) => {
-        if (canSync) {
-          chrome.storage.local.set({ coreChatHistory: JSON.parse(coreData) }).then(() => {
-            alert('AIChatBeat sync success')
-          })
-        }
-      })
+    const parsedData = JSON.parse(fullData)
+    ReportChats(parsedData, false)
+    ReportChatsLogs(parsedData)
   }
 
   reader.readAsText(file)
@@ -100,4 +84,4 @@ if (!exportFullDataButton) {
 }
 exportFullDataButton.onclick = exportFullData
 
-createCoreInput()
+createReportInput()

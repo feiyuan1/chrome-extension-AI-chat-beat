@@ -22,6 +22,7 @@ export interface StorePayload {
 export interface StoreMessage {
   type: CHROME_MESSAGE_TYPE
   payload: StorePayload[]
+  aggregate?: boolean // 是否聚合上报metric
 }
 
 export interface SessionMapItem {
