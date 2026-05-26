@@ -1,10 +1,17 @@
 import { Platform, StorePayload } from '../types'
-import { consoleError, log } from '../utils/debugger'
-import { getSessionName, initSessionMap } from './utils'
+import { consoleError } from '../utils/debugger'
+import {
+  CreateMonitorLog,
+  getSessionName,
+  initSessionMap,
+  Log,
+  MonitorAdapterErrorBoundary,
+  MonitorLogType,
+  reportLogs,
+  storeFailedLogs,
+} from './utils'
 
-export interface ChatRequestLog {
-  _msg: string
-  _time: number
+export interface ChatRequestLog extends Log {
   platform: Platform
   index: string
   session_name: string
@@ -21,19 +28,15 @@ const chatToLog = (chat: StorePayload): ChatRequestLog => {
   }
 }
 
-const reportLogs = (logs: ChatRequestLog[]) => {
-  const body = logs.map((log) => JSON.stringify(log)).join('\n')
-  log('report log body', body)
-  fetch('http://localhost:8011/proxy/insert/jsonline?_stream_fields=session_name', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body, // JSON Lines 格式
-  })
-    .then(() => log(`push ${logs.length} logs success`))
-    .catch((err) => consoleError('上传日志失败:', err))
-}
-
-export const ReportChatsLogs = async (chats: StorePayload[]) => {
-  await initSessionMap()
-  reportLogs(chats.map(chatToLog))
-}
+export const ReportChatsLogs = MonitorAdapterErrorBoundary({
+  id: 'report log',
+  innerScript: async (chats: StorePayload[]) => {
+    await initSessionMap()
+    reportLogs(chats.map(chatToLog))
+  },
+  reject: (err) => {
+    consoleError(err)
+    const errorLog = CreateMonitorLog(`${err}`, MonitorLogType.uncaught_error)
+    storeFailedLogs([errorLog])
+  },
+})

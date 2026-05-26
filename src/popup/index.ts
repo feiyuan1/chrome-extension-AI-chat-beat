@@ -65,7 +65,7 @@ const reportChatData = function (event: Event) {
     }
     alert('读取成功')
     const parsedData = JSON.parse(fullData)
-    ReportChats(parsedData, false)
+    ReportChats({ chats: parsedData, aggregate: false })
     ReportChatsLogs(parsedData)
   }
 

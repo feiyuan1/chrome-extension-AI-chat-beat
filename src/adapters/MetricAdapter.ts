@@ -1,6 +1,15 @@
 import { Platform, StorePayload } from '../types'
-import { consoleError, log } from '../utils/debugger'
-import { getSessionName, initSessionMap } from './utils'
+import { consoleError } from '../utils/debugger'
+import {
+  CreateMonitorLog,
+  getSessionName,
+  initSessionMap,
+  MonitorAdapterErrorBoundary,
+  MonitorLogType,
+  reportMetrics,
+  Sample,
+  storeFailedLogs,
+} from './utils'
 
 const counterMap = new Map()
 
@@ -10,22 +19,8 @@ type ChatRequestTotalMetric = {
   session_name: string
 }
 
-interface ChatReportData {
+interface ChatReportData extends Sample {
   metric: ChatRequestTotalMetric
-  values: number[]
-  timestamps: number[]
-}
-
-const reportMetrics = (metrics: ChatReportData[]) => {
-  const body = metrics.map((metric) => JSON.stringify(metric)).join('\n')
-  log('report body', body)
-  fetch('http://localhost:8010/proxy/api/v1/import', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body, // JSON Lines 格式
-  })
-    .then(() => log(`push ${metrics.length} metric success`))
-    .catch((err) => consoleError('上报指标失败:', err))
 }
 
 const debounce = <T extends (...args: any) => any>(fn: T, delay: number = 1000) => {
@@ -70,7 +65,7 @@ const inc = function (_key: string, val: number = 1) {
   counter.report([{ values: [counter.value], metric: counter.metric, timestamps: [Date.now()] }])
 }
 
-const triggerReportMetric = async (chat: StorePayload) => {
+const triggerReportMetric = (chat: StorePayload) => {
   const { platform, session_id } = chat
   const session_name = getSessionName(session_id)
   const metric: ChatRequestTotalMetric = { __name__: 'chat_requests_total', platform, session_name }
@@ -79,7 +74,7 @@ const triggerReportMetric = async (chat: StorePayload) => {
   return counter
 }
 
-const batchReportChatsNoAgg = async (chats: StorePayload[]) => {
+const batchReportChatsNoAgg = (chats: StorePayload[]) => {
   reportMetrics(
     chats.map((chat) => ({
       metric: {
@@ -93,11 +88,24 @@ const batchReportChatsNoAgg = async (chats: StorePayload[]) => {
   )
 }
 
-export const ReportChats = async (chats: StorePayload[], aggregate: boolean = true) => {
-  await initSessionMap()
-  if (aggregate) {
-    triggerReportMetric(chats[0])
-    return
-  }
-  batchReportChatsNoAgg(chats)
+interface ReportChatsParam {
+  chats: StorePayload[]
+  aggregate?: boolean
 }
+
+export const ReportChats = MonitorAdapterErrorBoundary({
+  id: 'metric',
+  innerScript: async ({ chats, aggregate = true }: ReportChatsParam) => {
+    await initSessionMap()
+    if (aggregate) {
+      triggerReportMetric(chats[0])
+      return
+    }
+    batchReportChatsNoAgg(chats)
+  },
+  reject(err) {
+    consoleError(err)
+    const errorLog = CreateMonitorLog(`${err}`, MonitorLogType.uncaught_error)
+    storeFailedLogs([errorLog])
+  },
+})

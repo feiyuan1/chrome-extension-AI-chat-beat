@@ -39,6 +39,8 @@ export enum TargetEnum {
   coreChatHistory = 'coreChatHistory',
   fullChatHistory = 'fullChatHistory',
   sessionMap = 'sessionMap',
+  reportFailedLogs = 'reportFailedLogs',
+  reportFailedMetrics = 'reportFailedMetrics',
 }
 
 export interface StoreChromeLocalError {
