@@ -1,6 +1,7 @@
 import { ReportChatsLogs } from '../adapters/logAdatper'
 import { ReportChats } from '../adapters/MetricAdapter'
 import { reportFailedLogs, reportFailedMetrics } from '../adapters/utils'
+import { RESOTRE_CHAT_CHROME_LOCAL } from '../constants/dev_env'
 import { CHROME_MESSAGE_TYPE, StoreMessage, SessionMapMessage, TargetEnum } from '../types'
 import { startWsClient } from './dev-client'
 import { handleBatchStore } from './util'
@@ -15,7 +16,9 @@ chrome.runtime.onMessage.addListener((message: StoreMessage, _sender, sendRespon
   if (message.type === CHROME_MESSAGE_TYPE.BATCH_CHAT_REQUESTS) {
     ReportChats({ chats: message.payload, aggregate: message.aggregate })
     ReportChatsLogs(message.payload)
-    handleBatchStore(message.payload, sendResponse)
+    if (RESOTRE_CHAT_CHROME_LOCAL) {
+      handleBatchStore(message.payload, sendResponse)
+    }
     return true
   }
 })

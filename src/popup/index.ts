@@ -2,25 +2,6 @@ import { ReportChatsLogs } from '../adapters/logAdatper'
 import { ReportChats } from '../adapters/MetricAdapter'
 import { log } from '../utils/debugger'
 
-const createExportCoreAnchorElement = function () {
-  const a = document.createElement('a')
-  a.innerText = 'export core data'
-  a.download = 'core-data.json'
-  a.style = 'font-size: 16px; display: none'
-  return a
-}
-
-const exportCoreData = function () {
-  const a = createExportCoreAnchorElement()
-  chrome.storage.local.get(['coreChatHistory'], (result) => {
-    const coreData = result.coreChatHistory || []
-    log('export coreChatHistory', coreData)
-    const blob = new Blob([JSON.stringify(coreData)], { type: 'application/json' })
-    a.href = URL.createObjectURL(blob)
-    a.click()
-  })
-}
-
 const createExportFullAnchorElement = function () {
   const a = document.createElement('a')
   a.innerText = 'export full data'
@@ -65,18 +46,16 @@ const reportChatData = function (event: Event) {
     }
     alert('读取成功')
     const parsedData = JSON.parse(fullData)
+    /**
+     * TODO 其实这里的代码结构有点问题，在 adapter/utils 导出的内容被 popup 引入了
+     * 按理来说，要么把这些function挪到 src/utils 要么纠正引入的function
+     */
     ReportChats({ chats: parsedData, aggregate: false })
     ReportChatsLogs(parsedData)
   }
 
   reader.readAsText(file)
 }
-
-const exportCoreDataButton = document.getElementById('core-data-button')
-if (!exportCoreDataButton) {
-  throw new Error('cannot found button with id core-data-button')
-}
-exportCoreDataButton.onclick = exportCoreData
 
 const exportFullDataButton = document.getElementById('full-data-button')
 if (!exportFullDataButton) {

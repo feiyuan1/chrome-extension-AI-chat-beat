@@ -1,27 +1,6 @@
 {
   "type": "object",
   "properties": {
-    "coreCacheHistory": {
-      "type": "array",
-      "id": "coreCacheHistory",
-      "items": {
-        "type": "object",
-        "properties": {
-          "timestamp": {
-            "type": "integer"
-          },
-          "session_id": {
-            "type": "string"
-          },
-          "platform": {
-            "type": "string"
-          },
-          "index": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "fullCacheHistory": {
       "type": "array",
       "id": "fullCacheHistory",
