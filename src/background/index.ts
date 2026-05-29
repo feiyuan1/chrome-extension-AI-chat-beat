@@ -12,14 +12,13 @@ startWsClient()
 reportFailedLogs()
 reportFailedMetrics()
 
-chrome.runtime.onMessage.addListener((message: StoreMessage, _sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message: StoreMessage) => {
   if (message.type === CHROME_MESSAGE_TYPE.BATCH_CHAT_REQUESTS) {
     ReportChats({ chats: message.payload, aggregate: message.aggregate })
     ReportChatsLogs(message.payload)
     if (RESOTRE_CHAT_CHROME_LOCAL) {
-      handleBatchStore(message.payload, sendResponse)
+      handleBatchStore(message.payload)
     }
-    return true
   }
 })
 

@@ -1,5 +1,4 @@
-import { FULL_CHAT_MAX_LENGTH } from '../constants'
-import { CHROME_MESSAGE_TYPE, StoreMessage, StoreChromeLocalResponse } from '../types'
+import { CHROME_MESSAGE_TYPE, StoreMessage } from '../types'
 import { consoleError, log } from '../utils/debugger'
 import { getLocalStorage, removeLocalStorageKey, setLocalStorage } from '../utils/localStorage'
 import { LocalStoragekeys } from '../types/localStorage'
@@ -12,26 +11,15 @@ export function injectScript() {
   ;(document.head || document.documentElement).appendChild(script)
 }
 
-export const handleStoreChatMessage = (message: StoreMessage, thenCallback?: () => void) => {
+export const handleStoreChatMessage = (message: StoreMessage, resolve?: () => void) => {
   try {
-    chrome.runtime.sendMessage(message).then((response: StoreChromeLocalResponse) => {
-      if (response.code === 200) {
-        thenCallback?.()
-        const fullChatHistoryLength = response?.data?.fullChatHistoryLength
-        if (fullChatHistoryLength && fullChatHistoryLength >= FULL_CHAT_MAX_LENGTH) {
-          alert(`fulldata 已经积累 ${fullChatHistoryLength} 条`)
-        }
-        return
-      }
-      if (response.code === 500) {
-        handleStoreFailed(response.message, message)
-        return
-      }
-    })
+    chrome.runtime.sendMessage(message)
+    resolve?.()
   } catch (err) {
     handleStoreFailed(err, message)
   }
 }
+
 export const handleStoreFailed = (err: unknown, message: StoreMessage) => {
   consoleError(err)
   const oldMessageList = getLocalStorage(LocalStoragekeys.unStoredMessageList) || []

@@ -45,13 +45,3 @@ export enum TargetEnum {
 export interface StoreChromeLocalError {
   message: unknown
 }
-
-export interface ResponseData {
-  fullChatHistoryLength?: number
-}
-
-export interface StoreChromeLocalResponse {
-  code: number
-  message?: unknown
-  data: ResponseData
-}
