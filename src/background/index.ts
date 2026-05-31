@@ -3,12 +3,14 @@ import { ReportChats } from '../adapters/MetricAdapter'
 import { reportFailedLogs, reportFailedMetrics } from '../adapters/utils'
 import { RESOTRE_CHAT_CHROME_LOCAL } from '../constants/dev_env'
 import { CHROME_MESSAGE_TYPE, StoreMessage, SessionMapMessage, TargetEnum } from '../types'
+import { log } from '../utils/debugger'
 import { startWsClient } from './dev-client'
 import { handleBatchStore } from './util'
 
-// TODO dev only
-startWsClient()
-
+const timeStamp = performance.now()
+if (import.meta.env.MODE === 'development') {
+  startWsClient()
+}
 reportFailedLogs()
 reportFailedMetrics()
 
@@ -29,5 +31,12 @@ chrome.runtime.onMessage.addListener((message: SessionMapMessage) => {
     })
 
     return
+  }
+})
+
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message.type === 'GET_BUNDLE_TIMESTAMP') {
+    log('sw timestamp: ', timeStamp)
+    sendResponse(timeStamp)
   }
 })

@@ -1,7 +1,6 @@
 import { log, consoleError } from '../utils/debugger'
 
 export const startWsClient = () => {
-  const timeStamp = performance.now()
   const wsClient = new WebSocket('ws://localhost:8000')
 
   wsClient.onmessage = (event: MessageEvent) => {
@@ -24,11 +23,4 @@ export const startWsClient = () => {
   wsClient.onerror = (error) => {
     consoleError('ERROR', error)
   }
-
-  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-    if (message.type === 'GET_BUNDLE_TIMESTAMP') {
-      log('sw timestamp: ', timeStamp)
-      sendResponse(timeStamp)
-    }
-  })
 }

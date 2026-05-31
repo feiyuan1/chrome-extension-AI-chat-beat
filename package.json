@@ -16,13 +16,14 @@
     "node": ">=14.18.0"
   },
   "scripts": {
-    "dev:all": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
-    "start:monitor": "concurrently \"npm run victoria-metrics\" \"npm run victoria-logs\" \"npm run grafana\"",
-    "dev:client": "npx nodemon --watch src --watch popup.html --ext ts,js,json,png --delay 3 --exec npm run build",
+    "dev:all": "chcp 65001 && concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "start:monitor": "chcp 65001 && concurrently \"npm run victoria-metrics\" \"npm run victoria-logs\" \"npm run grafana\"",
+    "dev:client": "npx nodemon --watch src --watch popup.html --ext ts,js,json,png --delay 3 --exec npm run dev",
     "dev:server": "npx shx rm -rf build-dev-server/ && tsc -p tsconfig.dev.json && npx shx mv build-dev-server/scripts/dev-server.js build-dev-server/scripts/dev-server.mjs && node build-dev-server/scripts/dev-server.mjs",
     "victoria-metrics": "npx shx rm -rf monitor/ && tsc -p tsconfig.monitor.json && node monitor/monitor-metric-reporter.js --storageDataPath=D:\\app\\victoria-metrics-windows-amd64-v1.118.0\\victoria-metrics-data --retentionPeriod=1y",
     "victoria-logs": "victoria-logs --storageDataPath=D:\\app\\victoria-logs-windows-amd64-v1.50.0\\victoria-logs-data --retentionPeriod=1y",
     "grafana": "grafana server --homepath D:\\app\\grafana\\grafana",
+    "dev": "tsc && vite build --mode development",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "fmt": "prettier --write '**/*.{ts,json,css,scss,md}'",

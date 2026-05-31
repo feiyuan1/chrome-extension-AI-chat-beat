@@ -27,7 +27,6 @@ export const handleStoreFailed = (err: unknown, message: StoreMessage) => {
   setLocalStorage(LocalStoragekeys.unStoredMessageList, oldMessageList.concat(message.payload))
 }
 
-// TODO DEV only
 /**
  * 检测 extension 是否已经更新
  */
