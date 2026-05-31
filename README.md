@@ -36,3 +36,7 @@ metric 和 log 数据都是存储在本地，具体存储位置在 victoria-metr
 # 调试 content-script&injectscript
 
 这两部分代码已经被注入到页面中，所以使用页面的 devtools 调试即可
+
+# 构建正式版
+
+npm run build
