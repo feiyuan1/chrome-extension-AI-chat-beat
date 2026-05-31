@@ -19,5 +19,9 @@
   },
   "include": ["src"],
   "exclude": ["src/manifest.ts"],
-  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.dev.json" }]
+  "references": [
+    { "path": "./tsconfig.node.json" },
+    { "path": "./tsconfig.dev.json" },
+    { "path": "./tsconfig.monitor.json" }
+  ]
 }

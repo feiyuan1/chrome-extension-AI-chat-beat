@@ -11,6 +11,7 @@
 /package
 **/**.crx
 /build-dev-server
+/monitor
 
 # misc
 .DS_Store

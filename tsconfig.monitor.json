@@ -2,11 +2,14 @@
   "compilerOptions": {
     "composite": true,
     "module": "esnext",
+    "types": ["node"],
     "moduleResolution": "bundler",
     "target": "esnext",
-    "outDir": "build-dev-server",
+    "outDir": "monitor",
+    "rootDir": "./scripts",
+    "tsBuildInfoFile": "./monitor/monitor.tsbuildinfo",
     "skipLibCheck": true
   },
-  "include": ["scripts/dev-server.ts"],
+  "include": ["scripts/monitor-metric-reporter.ts"],
   "exclude": ["**/**.d.ts"]
 }
