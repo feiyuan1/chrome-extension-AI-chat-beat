@@ -2,6 +2,7 @@ import { CHROME_MESSAGE_TYPE, StoreMessage } from '../types'
 import { consoleError, log } from '../utils/debugger'
 import { getLocalStorage, removeLocalStorageKey, setLocalStorage } from '../utils/localStorage'
 import { LocalStoragekeys } from '../types/localStorage'
+import { CreateMonitorLog, MonitorLogType, storeFailedLogs } from '../adapters/utils'
 
 export function injectScript() {
   const script = document.createElement('script')
@@ -64,6 +65,8 @@ export const globalErrorBoundary = (fn: () => void) => {
   try {
     fn()
   } catch (err) {
+    const errorLog = CreateMonitorLog(`${err}`, MonitorLogType.uncaught_error)
+    storeFailedLogs([errorLog])
     consoleError('globalErrorBoundary', err)
   }
 }

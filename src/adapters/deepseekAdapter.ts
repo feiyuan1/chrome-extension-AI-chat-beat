@@ -1,10 +1,11 @@
-import { SessionMapItem, StorePayload } from '../types'
+import { Platform, SessionMapItem, StorePayload } from '../types'
 import { createIndex } from '../utils'
 import { AdapterResultStatus, AdaptError, AdaptResult, AdaptSuccess } from '../types/adapter'
 
 const CreateError = (message: unknown): AdaptError => ({
   status: AdapterResultStatus.error,
   message,
+  platform: Platform.deepseek,
 })
 
 const CreateSuccess = <T extends any>(data: any): AdaptSuccess<T> => ({

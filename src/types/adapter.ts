@@ -1,3 +1,5 @@
+import { Platform } from '.'
+
 export enum AdapterResultStatus {
   success,
   error,
@@ -6,6 +8,7 @@ export enum AdapterResultStatus {
 export interface AdaptError {
   status: AdapterResultStatus.error
   message: unknown
+  platform: Platform
 }
 
 export type AdaptSuccess<T extends any = any> = {

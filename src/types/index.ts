@@ -10,6 +10,7 @@ export enum CHROME_MESSAGE_TYPE {
 
 export enum Platform {
   deepseek = 'deepseek',
+  unknown = 'unknown',
 }
 export interface StorePayload {
   session_id: string
