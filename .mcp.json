@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "joyride-nrepl": {
+      "command": "bb",
+      "args": ["-f", "D:/FE/AI/mcp-nrepl-joyride/bb.edn", "mcp-server"],
+      "env": {
+        "JOYRIDE_WORKSPACE": "D:/FE/chrome-extension/AI-chat-beat",
+        "MCP_DEBUG": "false"
+      }
+    }
+  }
+}

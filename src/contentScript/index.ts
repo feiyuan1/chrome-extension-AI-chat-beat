@@ -1,4 +1,8 @@
-import { CHROME_MESSAGE_TYPE, StoreMessage, SessionMapMessage, WINDOW_MESSAGE_TYPE } from '../types'
+import * as DeepseekAdapter from '../adapters/deepseekAdapter'
+import { CHROME_MESSAGE_TYPE, SessionMapMessage, StoreMessage, WINDOW_MESSAGE_TYPE } from '../types'
+import { LocalStoragekeys } from '../types/localStorage'
+import { getLocalStorage, setLocalStorage } from '../utils/localStorage'
+import { AdapterErrorBoundary } from './adapter'
 import {
   globalErrorBoundary,
   handleStoreChatMessage,
@@ -6,10 +10,6 @@ import {
   reStoreMessages,
   syncBundleInfo,
 } from './util'
-import * as DeepseekAdapter from '../adapters/deepseekAdapter'
-import { AdapterErrorBoundary } from './adapter'
-import { getLocalStorage, setLocalStorage } from '../utils/localStorage'
-import { LocalStoragekeys } from '../types/localStorage'
 
 const innerScript = () => {
   injectScript()
