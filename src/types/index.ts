@@ -46,3 +46,5 @@ export enum TargetEnum {
 export interface StoreChromeLocalError {
   message: unknown
 }
+
+export * from './labels'
