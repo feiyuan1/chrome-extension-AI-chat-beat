@@ -48,3 +48,4 @@ export interface StoreChromeLocalError {
 }
 
 export * from './labels'
+export * from './taxonomy'

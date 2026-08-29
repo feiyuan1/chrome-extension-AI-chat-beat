@@ -1,6 +1,18 @@
-import { LabelModelResponse } from '../types/labels'
-import { EmotionLabel, LABEL_TAXONOMY_VERSION, PromptTypeLabel } from '../types/taxonomy'
-import { isConfidence, isEmotionLabel, isPromptTypeLabel } from './labelValueValidation'
+import {
+  LABEL_DIMENSIONS,
+  LabelModelResponse,
+  ModelPromptLabels,
+} from '../types/labels'
+import {
+  DomainLabel,
+  EmotionLabel,
+  InfoProcessingLabel,
+  IntentLabel,
+  LABEL_TAXONOMY_VERSION,
+  ProblemNatureLabel,
+  ThinkingModeLabel,
+} from '../types/taxonomy'
+import { isConfidence, LABEL_VALIDATORS } from './labelValueValidation'
 
 export const parseLabelModelContent = (content: string): LabelModelResponse => {
   const trimmed = content.trim()
@@ -22,54 +34,57 @@ export const parseLabelModelContent = (content: string): LabelModelResponse => {
 }
 
 const isLabelModelResponse = (value: unknown): value is LabelModelResponse => {
-  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+  if (!isRecord(value) || !hasOnlyKeys(value, ['taxonomyVersion', 'labels'])) {
+    return false
+  }
+  if (value.taxonomyVersion !== LABEL_TAXONOMY_VERSION) {
     return false
   }
 
-  const response = value as Record<string, unknown>
-  if (response.taxonomyVersion !== LABEL_TAXONOMY_VERSION) {
+  const labels = value.labels
+  if (!isRecord(labels) || !hasOnlyKeys(labels, [...LABEL_DIMENSIONS])) {
     return false
   }
 
-  const labels = response.labels
-  if (typeof labels !== 'object' || labels === null || Array.isArray(labels)) {
-    return false
-  }
-
-  const values = labels as Record<string, unknown>
-  if (!hasOnlyKeys(values, ['emotion', 'type'])) {
-    return false
-  }
-
-  return isDecision(values.emotion, isEmotionLabel) && isDecision(values.type, isPromptTypeLabel)
+  return LABEL_DIMENSIONS.every((dimension) => {
+    return isDecision(labels[dimension], LABEL_VALIDATORS[dimension])
+  })
 }
 
-const isDecision = <T extends string>(
+const isDecision = (
   value: unknown,
-  isLabel: (value: unknown) => value is T,
+  isLabel: (value: unknown) => boolean,
 ): boolean => {
-  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+  if (!isRecord(value) || !hasOnlyKeys(value, ['value', 'confidence'])) {
     return false
   }
 
-  const decision = value as Record<string, unknown>
-  return (
-    hasOnlyKeys(decision, ['value', 'confidence']) &&
-    isLabel(decision.value) &&
-    isConfidence(decision.confidence)
-  )
+  return isLabel(value.value) && isConfidence(value.confidence)
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> => {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
 const hasOnlyKeys = (value: Record<string, unknown>, keys: string[]): boolean => {
   const actualKeys = Object.keys(value).sort()
   const expectedKeys = [...keys].sort()
-  return actualKeys.length === expectedKeys.length && actualKeys.every((key, index) => key === expectedKeys[index])
+  return (
+    actualKeys.length === expectedKeys.length &&
+    actualKeys.every((key, index) => key === expectedKeys[index])
+  )
 }
+
+const createUnknownLabels = (): ModelPromptLabels => ({
+  domain: { value: DomainLabel.Other, confidence: 0 },
+  intent: { value: IntentLabel.Other, confidence: 0 },
+  emotion: { value: EmotionLabel.Unknown, confidence: 0 },
+  thinking_mode: { value: ThinkingModeLabel.Unknown, confidence: 0 },
+  problem_nature: { value: ProblemNatureLabel.Unknown, confidence: 0 },
+  info_processing: { value: InfoProcessingLabel.Unknown, confidence: 0 },
+})
 
 export const createFallbackLabels = (): LabelModelResponse => ({
   taxonomyVersion: LABEL_TAXONOMY_VERSION,
-  labels: {
-    emotion: { value: EmotionLabel.unknown, confidence: 0 },
-    type: { value: PromptTypeLabel.unknown, confidence: 0 },
-  },
+  labels: createUnknownLabels(),
 })

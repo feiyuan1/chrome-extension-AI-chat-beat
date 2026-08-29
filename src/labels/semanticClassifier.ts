@@ -1,6 +1,6 @@
-import { LabelModelResponse } from '../types/labels'
+import { LabelClassificationResult, LabelModelResponse } from '../types/labels'
 import { LabelModelConfig } from '../types/modelConfig'
-import { createLabelRequestBody, LABEL_DIMENSIONS } from './aiLabelRules'
+import { createLabelRequestBody } from './aiLabelRules'
 import { createFallbackLabels, parseLabelModelContent } from './labelValidation'
 
 export type LabelClassificationErrorCode = 'config' | 'http' | 'timeout' | 'network' | 'response'
@@ -21,12 +21,20 @@ interface ChatCompletionResponse {
       content?: unknown
     }
   }>
+  usage: {
+    prompt_tokens: number
+    completion_tokens: number
+    total_tokens: number
+    prompt_tokens_details: {
+      cached_tokens: number
+    }
+  }
 }
 
 export const classifyPrompt = async (
   prompt: string,
   config: LabelModelConfig,
-): Promise<LabelModelResponse> => {
+): Promise<LabelClassificationResult> => {
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), config.timeoutMs)
 
@@ -37,10 +45,7 @@ export const classifyPrompt = async (
         'Content-Type': 'application/json',
         ...(config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : {}),
       },
-      body: JSON.stringify({
-        ...createLabelRequestBody(config.model, prompt),
-        dimensions: LABEL_DIMENSIONS,
-      }),
+      body: JSON.stringify(createLabelRequestBody(config.model, prompt)),
       credentials: 'omit',
       redirect: 'error',
       signal: controller.signal,
@@ -65,10 +70,16 @@ export const classifyPrompt = async (
       throw new LabelClassificationError('response', 'label model response has no content')
     }
 
+    let labels: LabelModelResponse
     try {
-      return parseLabelModelContent(content)
+      labels = parseLabelModelContent(content)
     } catch {
       throw new LabelClassificationError('response', 'invalid label model response schema')
+    }
+
+    return {
+      labels,
+      usage: data.usage,
     }
   } catch (error) {
     if (error instanceof LabelClassificationError) {
@@ -86,10 +97,21 @@ export const classifyPrompt = async (
 export const classifyPromptWithFallback = async (
   prompt: string,
   config: LabelModelConfig,
-): Promise<LabelModelResponse> => {
+): Promise<LabelClassificationResult> => {
   try {
     return await classifyPrompt(prompt, config)
-  } catch {
-    return createFallbackLabels()
+  } catch (error) {
+    if (error instanceof LabelClassificationError && error.code === 'config') {
+      throw error
+    }
+    return {
+      labels: createFallbackLabels(),
+      usage: {
+        prompt_tokens: 0,
+        completion_tokens: 0,
+        total_tokens: 0,
+        prompt_tokens_details: { cached_tokens: 0 },
+      },
+    }
   }
 }
