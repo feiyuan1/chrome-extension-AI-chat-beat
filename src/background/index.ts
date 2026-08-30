@@ -34,6 +34,10 @@ chrome.runtime.onMessage.addListener((message: StoreMessage) => {
     return
   }
 
+  if (RESOTRE_CHAT_CHROME_LOCAL) {
+    handleBatchStore(message.payload)
+  }
+
   ReportChats({ chats: message.payload, aggregate: message.aggregate })
   loadLabelModelConfig()
     .then((config) => {
@@ -41,7 +45,7 @@ chrome.runtime.onMessage.addListener((message: StoreMessage) => {
         throw new Error(NOTIFICATION_KEY)
       }
 
-      Promise.all(
+      return Promise.all(
         message.payload.map(async (chat) => {
           try {
             const { labels, usage } = await classifyPromptWithFallback(chat.prompt, config)
@@ -67,11 +71,13 @@ chrome.runtime.onMessage.addListener((message: StoreMessage) => {
             return chat
           }
         }),
-      ).then((chats) => ReportChatsLogs(chats))
-
-      if (RESOTRE_CHAT_CHROME_LOCAL) {
-        handleBatchStore(message.payload)
+      )
+    })
+    .then((result) => {
+      if (!Array.isArray(result)) {
+        return
       }
+      ReportChatsLogs(result)
     })
     .catch((err) => {
       if (err?.message === NOTIFICATION_KEY) {
