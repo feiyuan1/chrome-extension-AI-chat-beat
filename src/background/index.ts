@@ -39,17 +39,6 @@ chrome.runtime.onMessage.addListener((message: StoreMessage) => {
       message.payload.map(async (chat) => {
         try {
           const { labels, usage } = await classifyPromptWithFallback(chat.prompt, labelModelConfig)
-          const promptCacheHitTokens = usage.prompt_tokens_details.cached_tokens
-          const promptCacheMissTokens = usage.prompt_tokens - promptCacheHitTokens
-
-          log('classifyPromptWithFallback response', chat.prompt, labels)
-          log('classifyPromptWithFallback usage', {
-            prompt_tokens: usage.prompt_tokens,
-            completion_tokens: usage.completion_tokens,
-            total_tokens: usage.total_tokens,
-            prompt_cache_hit_tokens: promptCacheHitTokens,
-            prompt_cache_miss_tokens: promptCacheMissTokens,
-          })
 
           return {
             ...chat,
