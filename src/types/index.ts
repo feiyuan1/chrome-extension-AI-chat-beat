@@ -41,6 +41,7 @@ export enum TargetEnum {
   sessionMap = 'sessionMap',
   reportFailedLogs = 'reportFailedLogs',
   reportFailedMetrics = 'reportFailedMetrics',
+  labelModelConfig = 'labelModelConfig',
 }
 
 export interface StoreChromeLocalError {
