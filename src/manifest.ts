@@ -32,7 +32,7 @@ export default defineManifest({
   web_accessible_resources: [
     { resources: ['injected.js'], matches: ['https://chat.deepseek.com/*'] },
   ],
-  permissions: ['unlimitedStorage'],
+  permissions: ['unlimitedStorage', 'notifications'],
   storage: {
     managed_schema: 'storage/schema.json',
   },
