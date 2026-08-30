@@ -159,6 +159,7 @@ export enum MonitorLogType {
   report_metric_error = 'report_metric_error',
   uncaught_error = 'uncaught_error',
   safe_execute_error = 'safe_execute_error',
+  ai_analyze_error = 'ai_analyze_error',
 }
 export interface MonitorLog extends Log {
   type: MonitorLogType

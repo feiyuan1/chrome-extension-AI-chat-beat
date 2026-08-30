@@ -1,7 +1,12 @@
-import labelModelConfig from '../../config/label-model.local.json'
 import { ReportChatsLogs } from '../adapters/logAdatper'
 import { ReportChats } from '../adapters/MetricAdapter'
-import { reportFailedLogs, reportFailedMetrics } from '../adapters/utils'
+import {
+  CreateMonitorLog,
+  MonitorLogType,
+  reportFailedLogs,
+  reportFailedMetrics,
+  storeFailedLogs,
+} from '../adapters/utils'
 import { RESOTRE_CHAT_CHROME_LOCAL } from '../constants/dev_env'
 import { classifyPromptWithFallback } from '../labels/semanticClassifier'
 import {
@@ -11,19 +16,10 @@ import {
   StoreMessage,
   TargetEnum,
 } from '../types'
+import { loadLabelModelConfig } from '../utils/config-storage'
 import { log } from '../utils/debugger'
 import { startWsClient } from './dev-client'
 import { handleBatchStore } from './util'
-
-chrome.runtime.onStartup.addListener(() => {
-  chrome.notifications.getPermissionLevel(log)
-  chrome.notifications.create('model-config-missing', {
-    type: 'basic',
-    iconUrl: 'public/icons/icon.png',
-    title: 'AI Chat Beat',
-    message: '模型配置缺失，请打开 popup 进行配置',
-  })
-})
 
 const timeStamp = performance.now()
 if (import.meta.env.MODE === 'development') {
@@ -33,12 +29,28 @@ reportFailedLogs()
 reportFailedMetrics()
 
 chrome.runtime.onMessage.addListener((message: StoreMessage) => {
-  if (message.type === CHROME_MESSAGE_TYPE.BATCH_CHAT_REQUESTS) {
-    ReportChats({ chats: message.payload, aggregate: message.aggregate })
+  if (message.type !== CHROME_MESSAGE_TYPE.BATCH_CHAT_REQUESTS) {
+    return
+  }
+
+  ReportChats({ chats: message.payload, aggregate: message.aggregate })
+
+  loadLabelModelConfig().then((config) => {
+    if (!config) {
+      chrome.notifications.create('model-config-missing', {
+        type: 'basic',
+        iconUrl: 'public/icons/icon.png',
+        title: 'AI Chat Beat',
+        message: '模型配置缺失，请打开 popup 进行配置,本轮 prompt 未打入标签',
+      })
+      ReportChatsLogs(message.payload)
+      return
+    }
+
     Promise.all(
       message.payload.map(async (chat) => {
         try {
-          const { labels, usage } = await classifyPromptWithFallback(chat.prompt, labelModelConfig)
+          const { labels, usage } = await classifyPromptWithFallback(chat.prompt, config)
 
           return {
             ...chat,
@@ -48,19 +60,22 @@ chrome.runtime.onMessage.addListener((message: StoreMessage) => {
             usage,
           }
         } catch (error: unknown) {
-          log(
-            'classifyPromptWithFallback error',
-            chat.index,
-            error instanceof Error ? error.message : error,
+          const errorMessage = error instanceof Error ? error.message : String(error)
+          const errorLog = CreateMonitorLog(
+            `classifyPromptWithFallback error: ${errorMessage}`,
+            MonitorLogType.ai_analyze_error,
           )
+          storeFailedLogs([errorLog])
+          log('classifyPromptWithFallback error', errorMessage)
           return chat
         }
       }),
     ).then((chats) => ReportChatsLogs(chats))
+
     if (RESOTRE_CHAT_CHROME_LOCAL) {
       handleBatchStore(message.payload)
     }
-  }
+  })
 })
 
 chrome.runtime.onMessage.addListener((message: SessionMapMessage) => {
