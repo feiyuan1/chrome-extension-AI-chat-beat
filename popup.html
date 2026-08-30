@@ -8,6 +8,26 @@
       <label>report chat data</label>
       <input type="file" id="report-chat-data" />
     </div>
+    <hr />
+    <div id="model-config-form">
+      <div>
+        <label>Base URL</label>
+        <input type="text" id="config-base-url" placeholder="https://api.example.com/v1" />
+      </div>
+      <div>
+        <label>Model</label>
+        <input type="text" id="config-model" placeholder="gpt-4" />
+      </div>
+      <div>
+        <label>Timeout (ms)</label>
+        <input type="number" id="config-timeout" placeholder="30000" />
+      </div>
+      <div>
+        <label>API Key</label>
+        <input type="password" id="config-api-key" placeholder="sk-..." />
+      </div>
+      <button id="config-save-button">保存配置</button>
+    </div>
     <script type="module" src="src/popup/index.ts"></script>
   </body>
 </html>

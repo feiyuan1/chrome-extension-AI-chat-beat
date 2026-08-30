@@ -1,6 +1,7 @@
 import { ReportChatsLogs } from '../adapters/logAdatper'
 import { ReportChats } from '../adapters/MetricAdapter'
 import { log } from '../utils/debugger'
+import { initConfigForm } from './model-config'
 
 const createExportFullAnchorElement = function () {
   const a = document.createElement('a')
@@ -64,3 +65,4 @@ if (!exportFullDataButton) {
 exportFullDataButton.onclick = exportFullData
 
 createReportInput()
+initConfigForm()
