@@ -26,3 +26,5 @@
 secrets.*.js
 **/**.pem
 /config/label-model.local.json
+/src/constants/cypto-key.ts
+src/types/cypto/**
