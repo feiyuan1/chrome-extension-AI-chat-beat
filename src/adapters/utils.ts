@@ -1,4 +1,4 @@
-import { SessionMapItem, TargetEnum } from '../types'
+import { TargetEnum } from '../types'
 import { consoleError, log } from '../utils/debugger'
 
 export const safeExecuteAsyncScript = (fn: () => Promise<any>) => {
@@ -14,21 +14,6 @@ export const safeExecuteAsyncScript = (fn: () => Promise<any>) => {
       storeFailedLogs([errorLog])
     }
   }
-}
-
-export const session_map: { value: SessionMapItem[] } = { value: [] }
-
-export const initSessionMap = safeExecuteAsyncScript(async () => {
-  const result = await chrome.storage.local.get(TargetEnum.sessionMap)
-  session_map.value = result[TargetEnum.sessionMap] || ([] as SessionMapItem[])
-})
-
-export const getSessionName = (session_id: string) => {
-  const target = session_map.value.find((item) => item.id === session_id)
-  if (target) {
-    return target.title
-  }
-  return 'other'
 }
 
 export const MonitorAdapterErrorBoundary = ({

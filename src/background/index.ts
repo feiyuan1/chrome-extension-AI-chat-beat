@@ -10,13 +10,7 @@ import {
 import { NOTIFICATION_KEY } from '../constants'
 import { RESOTRE_CHAT_CHROME_LOCAL } from '../constants/dev_env'
 import { classifyPromptWithFallback } from '../labels/semanticClassifier'
-import {
-  CHROME_MESSAGE_TYPE,
-  LabelDimension,
-  SessionMapMessage,
-  StoreMessage,
-  TargetEnum,
-} from '../types'
+import { CHROME_MESSAGE_TYPE, LabelDimension, StoreMessage } from '../types'
 import { loadLabelModelConfig } from '../utils/config-storage'
 import { log } from '../utils/debugger'
 import { startWsClient } from './dev-client'
@@ -91,16 +85,6 @@ chrome.runtime.onMessage.addListener((message: StoreMessage) => {
         ReportChatsLogs(message.payload)
       }
     })
-})
-
-chrome.runtime.onMessage.addListener((message: SessionMapMessage) => {
-  if (message.type === CHROME_MESSAGE_TYPE.AI_CHAT_SESSION_MAP) {
-    chrome.storage.local.set({
-      [TargetEnum.sessionMap]: message.payload,
-    })
-
-    return
-  }
 })
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {

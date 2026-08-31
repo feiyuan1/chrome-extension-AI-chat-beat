@@ -2,8 +2,6 @@ import { Platform, StorePayload } from '../types'
 import { consoleError } from '../utils/debugger'
 import {
   CreateMonitorLog,
-  getSessionName,
-  initSessionMap,
   MonitorAdapterErrorBoundary,
   MonitorLogType,
   reportMetrics,
@@ -16,7 +14,6 @@ const counterMap = new Map()
 type ChatRequestTotalMetric = {
   __name__: string
   platform: Platform
-  session_name: string
 }
 
 interface ChatReportData extends Sample {
@@ -66,9 +63,8 @@ const inc = function (_key: string, val: number = 1) {
 }
 
 const triggerReportMetric = (chat: StorePayload) => {
-  const { platform, session_id } = chat
-  const session_name = getSessionName(session_id)
-  const metric: ChatRequestTotalMetric = { __name__: 'chat_requests_total', platform, session_name }
+  const { platform } = chat
+  const metric: ChatRequestTotalMetric = { __name__: 'chat_requests_total', platform }
   const counter = createCounter(metric, 1000)
   counter.inc()
   return counter
@@ -80,7 +76,6 @@ const batchReportChatsNoAgg = (chats: StorePayload[]) => {
       metric: {
         __name__: 'chat_requests_total',
         platform: chat.platform,
-        session_name: getSessionName(chat.session_id),
       },
       values: [1],
       timestamps: [chat.timestamp],
@@ -96,7 +91,6 @@ interface ReportChatsParam {
 export const ReportChats = MonitorAdapterErrorBoundary({
   id: 'metric',
   innerScript: async ({ chats, aggregate = true }: ReportChatsParam) => {
-    await initSessionMap()
     if (aggregate) {
       triggerReportMetric(chats[0])
       return

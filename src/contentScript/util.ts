@@ -1,8 +1,8 @@
-import { CHROME_MESSAGE_TYPE, StoreMessage } from '../types'
+import { CreateMonitorLog, MonitorLogType } from '../adapters/utils'
+import { CHROME_MESSAGE_TYPE, Platform, StoreMessage } from '../types'
+import { LocalStoragekeys } from '../types/localStorage'
 import { consoleError, log } from '../utils/debugger'
 import { getLocalStorage, removeLocalStorageKey, setLocalStorage } from '../utils/localStorage'
-import { LocalStoragekeys } from '../types/localStorage'
-import { CreateMonitorLog, MonitorLogType, storeFailedLogs } from '../adapters/utils'
 
 export function injectScript() {
   const script = document.createElement('script')
@@ -46,18 +46,15 @@ export const syncBundleInfo = () => {
   }, 2000)
 }
 
-export function isAIChatRequest(url: string | URL) {
-  const path = typeof url === 'string' ? url : url.pathname
-  return (
-    path.includes('/api/v0/chat/completion') ||
-    // url.includes("/api/v0/chat_session/fetch_page") ||
-    path.includes('/api/v0/chat/edit_message')
-  )
-}
-
-export function isFetchPage(url: string | URL) {
-  const path = typeof url === 'string' ? url : url.pathname
-  return path.includes('/api/v0/chat_session/fetch_page')
+export function isPlatformChatRequest(platform: Platform, path: string): boolean {
+  switch (platform) {
+    case Platform.deepseek:
+      return path.includes('/api/v0/chat/completion') || path.includes('/api/v0/chat/edit_message')
+    case Platform.yuanbao:
+      return path.startsWith('/api/chat/')
+    default:
+      return false
+  }
 }
 
 export const globalErrorBoundary = (fn: () => void) => {
@@ -65,8 +62,8 @@ export const globalErrorBoundary = (fn: () => void) => {
     fn()
   } catch (err) {
     const errorLog = CreateMonitorLog(`${err}`, MonitorLogType.uncaught_error)
-    storeFailedLogs([errorLog])
-    consoleError('globalErrorBoundary', err)
+    // TODO store at page local storage
+    consoleError('globalErrorBoundary', err, errorLog)
   }
 }
 
@@ -86,4 +83,14 @@ export const reStoreMessages = () => {
       removeLocalStorageKey(LocalStoragekeys.unStoredMessageList)
     },
   )
+}
+
+export const getPath = (url: string | URL) => {
+  if (url instanceof URL) {
+    return url.pathname
+  }
+  if (url.startsWith('/')) {
+    return url
+  }
+  return new URL(url).pathname
 }
