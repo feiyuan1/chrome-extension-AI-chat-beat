@@ -12,6 +12,10 @@ export default defineManifest({
   host_permissions: [
     'https://chat.deepseek.com/*',
     'https://yuanbao.tencent.com/*',
+    'https://www.qianwen.com/*',
+    'https://wenxin.baidu.com/*',
+    'https://www.chatglm.cn/*',
+    'https://www.doubao.com/*',
     'http://127.0.0.1:8428/*',
     'http://127.0.0.1:9428/*',
   ],
@@ -25,13 +29,30 @@ export default defineManifest({
   },
   content_scripts: [
     {
-      matches: ['https://chat.deepseek.com/*', 'https://yuanbao.tencent.com/*'],
+      matches: [
+        'https://chat.deepseek.com/*',
+        'https://yuanbao.tencent.com/*',
+        'https://www.qianwen.com/*',
+        'https://wenxin.baidu.com/*',
+        'https://www.chatglm.cn/*',
+        'https://www.doubao.com/*',
+      ],
       js: ['src/contentScript/index.ts'],
       run_at: 'document_start',
     },
   ],
   web_accessible_resources: [
-    { resources: ['injected.js'], matches: ['https://chat.deepseek.com/*', 'https://yuanbao.tencent.com/*'] },
+    {
+      resources: ['injected.js'],
+      matches: [
+        'https://chat.deepseek.com/*',
+        'https://yuanbao.tencent.com/*',
+        'https://www.qianwen.com/*',
+        'https://wenxin.baidu.com/*',
+        'https://www.chatglm.cn/*',
+        'https://www.doubao.com/*',
+      ],
+    },
   ],
   permissions: ['unlimitedStorage', 'notifications'],
   storage: {

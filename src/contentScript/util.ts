@@ -52,6 +52,14 @@ export function isPlatformChatRequest(platform: Platform, path: string): boolean
       return path.includes('/api/v0/chat/completion') || path.includes('/api/v0/chat/edit_message')
     case Platform.yuanbao:
       return path.startsWith('/api/chat/')
+    case Platform.qianwen:
+      return path.includes('/api/v2/chat')
+    case Platform.yiyan:
+      return path.includes('/aichat/api/conversation')
+    case Platform.chatglm:
+      return path.includes('/backend-api/assistant/stream')
+    case Platform.doubao:
+      return path.includes('/chat/completion')
     default:
       return false
   }
@@ -62,7 +70,7 @@ export const globalErrorBoundary = (fn: () => void) => {
     fn()
   } catch (err) {
     const errorLog = CreateMonitorLog(`${err}`, MonitorLogType.uncaught_error)
-    // TODO store at page local storage
+    // TODO store at page local storage need revert and inject use an another bodundary
     consoleError('globalErrorBoundary', err, errorLog)
   }
 }

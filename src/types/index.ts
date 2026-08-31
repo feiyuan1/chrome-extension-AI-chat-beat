@@ -9,13 +9,16 @@ export enum CHROME_MESSAGE_TYPE {
 export enum Platform {
   deepseek = 'deepseek',
   yuanbao = 'yuanbao',
+  qianwen = 'qianwen',
+  yiyan = 'yiyan',
+  chatglm = 'chatglm',
+  doubao = 'doubao',
   unknown = 'unknown',
 }
 export interface StorePayload {
   prompt: string
   timestamp: number
   platform: Platform
-  index: string
 }
 
 export interface StoreMessage {
