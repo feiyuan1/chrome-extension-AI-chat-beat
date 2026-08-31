@@ -11,7 +11,6 @@ import {
 
 export interface ChatRequestLog extends Log {
   platform: Platform
-  index: string
   labels?: ModelPromptLabels
   prompt_tokens?: LabelClassificationResult['usage']['prompt_tokens']
   completion_tokens?: LabelClassificationResult['usage']['completion_tokens']
@@ -31,7 +30,6 @@ const chatToLog = (chat: ChatLogPayload): ChatRequestLog => {
     _msg: chat.prompt,
     _time: chat.timestamp,
     platform: chat.platform,
-    index: chat.index,
     ...(chat.labels && { labels: chat.labels }),
     ...(usage && {
       prompt_tokens: usage.prompt_tokens,
