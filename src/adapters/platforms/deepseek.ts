@@ -32,8 +32,8 @@ export const ChatDataAdapter = AdapterErrorBoundary<AdaptResult<StorePayload>>(
     if (!data || typeof data !== 'object') {
       return CreateError('ChatDataAdapter required an object')
     }
-    if (!data.body?.prompt || !data.body?.chat_session_id) {
-      return CreateError('missing required field: prompt or chat_session_id')
+    if (!data.body?.prompt) {
+      return CreateError('missing required field: prompt')
     }
     const {
       body: { prompt },
