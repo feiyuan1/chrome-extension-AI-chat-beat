@@ -7,6 +7,7 @@ import {
   globalErrorBoundary,
   handleStoreChatMessage,
   injectScript,
+  reportLocalStroageErrorLogs,
   reStoreMessages,
   syncBundleInfo,
 } from './util'
@@ -15,6 +16,7 @@ const innerScript = () => {
   injectScript()
   syncBundleInfo()
   reStoreMessages()
+  reportLocalStroageErrorLogs()
 
   // 监听来自 injected 的消息，转发给 background
   window.addEventListener('message', (event) => {

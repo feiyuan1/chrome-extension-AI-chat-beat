@@ -1,4 +1,4 @@
-import { CreateMonitorLog, MonitorLogType } from '../adapters/utils'
+import { CreateMonitorLog, MonitorLogType, storeFailedLogs } from '../adapters/utils'
 import { CHROME_MESSAGE_TYPE, Platform, StoreMessage } from '../types'
 import { LocalStoragekeys } from '../types/localStorage'
 import { consoleError, log } from '../utils/debugger'
@@ -70,8 +70,8 @@ export const globalErrorBoundary = (fn: () => void) => {
     fn()
   } catch (err) {
     const errorLog = CreateMonitorLog(`${err}`, MonitorLogType.uncaught_error)
-    // TODO store at page local storage need revert and inject use an another bodundary
-    consoleError('globalErrorBoundary', err, errorLog)
+    storeFailedLogs([errorLog])
+    consoleError('globalErrorBoundary', err)
   }
 }
 
@@ -101,4 +101,13 @@ export const getPath = (url: string | URL) => {
     return url
   }
   return new URL(url).pathname
+}
+
+export const reportLocalStroageErrorLogs = () => {
+  const errorLogs = getLocalStorage(LocalStoragekeys.errorLogs) || []
+  if (!errorLogs.length) {
+    return
+  }
+  storeFailedLogs(errorLogs)
+  removeLocalStorageKey(LocalStoragekeys.errorLogs)
 }
