@@ -1,8 +1,13 @@
 import { Platform } from '../../types'
+import { AdaptError, AdaptResult, AdaptSuccess, AdapterResultStatus } from '../../types/adapter'
 
 export const PLATFORM_HOSTS: Record<Platform, string[]> = {
   [Platform.deepseek]: ['chat.deepseek.com'],
   [Platform.yuanbao]: ['yuanbao.tencent.com'],
+  [Platform.qianwen]: ['www.qianwen.com'],
+  [Platform.yiyan]: ['wenxin.baidu.com'],
+  [Platform.chatglm]: ['www.chatglm.cn'],
+  [Platform.doubao]: ['www.doubao.com'],
   [Platform.unknown]: [],
 }
 
@@ -14,4 +19,39 @@ export function detectPlatform(url: string | URL): Platform {
     }
   }
   return Platform.unknown
+}
+
+export function createPlatformError(platform: Platform) {
+  return function (message: unknown): AdaptError {
+    return {
+      status: AdapterResultStatus.error,
+      message,
+      platform,
+    }
+  }
+}
+
+export function createSuccess<T>(data: T): AdaptSuccess<T> {
+  return {
+    status: AdapterResultStatus.success,
+    data,
+  }
+}
+
+export function createAdapterErrorBoundary<T extends AdaptResult>(
+  id: string,
+  innerScript: (...args: any[]) => T,
+) {
+  return (...args: any[]) => {
+    try {
+      return innerScript(...args)
+    } catch (err) {
+      const errorResult = {
+        status: AdapterResultStatus.error,
+        message: `${id}: ${err}`,
+      } as T
+
+      return errorResult
+    }
+  }
 }

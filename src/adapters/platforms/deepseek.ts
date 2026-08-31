@@ -1,51 +1,25 @@
 import { Platform, StorePayload } from '../../types'
-import { AdapterResultStatus, AdaptError, AdaptResult, AdaptSuccess } from '../../types/adapter'
-import { createIndex } from '../../utils'
+import { AdaptResult } from '../../types/adapter'
+import { createAdapterErrorBoundary, createPlatformError, createSuccess } from './utils'
 
-const CreateError = (message: unknown): AdaptError => ({
-  status: AdapterResultStatus.error,
-  message,
-  platform: Platform.deepseek,
-})
+const platformError = createPlatformError(Platform.deepseek)
 
-const CreateSuccess = <T>(data: T): AdaptSuccess<T> => ({
-  status: AdapterResultStatus.success,
-  data,
-})
-
-const AdapterErrorBoundary = <T extends AdaptResult>(
-  id: string,
-  innerScript: (...data: any[]) => T,
-) => {
-  return (...args: any[]) => {
-    try {
-      return innerScript(...args)
-    } catch (err) {
-      return CreateError(`${id}${err}`) as T
-    }
-  }
-}
-
-export const ChatDataAdapter = AdapterErrorBoundary<AdaptResult<StorePayload>>(
-  'chatdata',
+export const ChatDataAdapter = createAdapterErrorBoundary<AdaptResult<StorePayload>>(
+  'deepseek-chatdata',
   (data: any) => {
     if (!data || typeof data !== 'object') {
-      return CreateError('ChatDataAdapter required an object')
+      return platformError('ChatDataAdapter required an object')
+    }
+    if (data.body?.prompt == null) {
+      return platformError('missing required field: prompt')
     }
     if (!data.body?.prompt) {
-      return CreateError('missing required field: prompt')
+      return platformError('no valid prompt found')
     }
-    const {
-      body: { prompt },
-      platform,
-      timestamp,
-    } = data
-
-    return CreateSuccess({
-      prompt,
-      platform,
-      timestamp,
-      index: createIndex(),
+    return createSuccess({
+      prompt: data.body.prompt,
+      platform: data.platform,
+      timestamp: data.timestamp,
     })
   },
 )
