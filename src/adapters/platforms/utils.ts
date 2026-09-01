@@ -9,6 +9,7 @@ export const PLATFORM_HOSTS: Record<Platform, string[]> = {
   [Platform.chatglm]: ['www.chatglm.cn', 'chatglm.cn'],
   [Platform.doubao]: ['www.doubao.com'],
   [Platform.kimi]: ['www.kimi.com'],
+  [Platform.chatgpt]: ['chatgpt.com'],
   [Platform.unknown]: [],
 }
 

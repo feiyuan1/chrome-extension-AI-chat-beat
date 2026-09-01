@@ -1,6 +1,7 @@
 import { Platform } from '../../types'
 import { AdaptResult } from '../../types/adapter'
 import * as ChatGLMAdapter from './chatglm'
+import * as ChatGPTAdapter from './chatgpt'
 import * as DeepseekAdapter from './deepseek'
 import * as DoubaoAdapter from './doubao'
 import * as KimiAdapter from './kimi'
@@ -24,6 +25,8 @@ export function getPlatformChatAdapter(platform: Platform): (data: any) => Adapt
       return DoubaoAdapter.ChatDataAdapter
     case Platform.kimi:
       return KimiAdapter.ChatDataAdapter
+    case Platform.chatgpt:
+      return ChatGPTAdapter.ChatDataAdapter
     default:
       throw new Error(`unsupported platform: ${platform}`)
   }

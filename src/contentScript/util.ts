@@ -62,6 +62,8 @@ export function isPlatformChatRequest(platform: Platform, path: string): boolean
       return path.includes('/chat/completion')
     case Platform.kimi:
       return path.includes('/apiv2/kimi.gateway.chat.v1.ChatService/Chat')
+    case Platform.chatgpt:
+      return path.includes('/backend-api/f/conversation')
     default:
       return false
   }

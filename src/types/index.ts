@@ -14,6 +14,7 @@ export enum Platform {
   chatglm = 'chatglm',
   doubao = 'doubao',
   kimi = 'kimi',
+  chatgpt = 'chatgpt',
   unknown = 'unknown',
 }
 export interface StorePayload {
