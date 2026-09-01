@@ -20,7 +20,28 @@ const innerScript = () => {
     throw new Error(`unsupported platform: ${location.hostname}`)
   }
 
-  const postChatRequest = (url: string | URL, bodyText: string) => {
+  const isInterceptableBody = (body: unknown): body is string | Uint8Array => {
+    return typeof body === 'string' || body instanceof Uint8Array
+  }
+
+  // TODO move to specific adapter
+  const parseRequestBody = (bodyPlatform: Platform, body: string | Uint8Array): any => {
+    if (typeof body === 'string') {
+      return JSON.parse(body)
+    }
+    if (body instanceof Uint8Array) {
+      if (bodyPlatform === Platform.kimi) {
+        // Uint8Array: skip the leading 4 non-body bytes and decode the rest as JSON
+        const content = body.slice(5)
+        const text = new TextDecoder().decode(content)
+        return JSON.parse(text)
+      }
+      const text = new TextDecoder().decode(body)
+      return JSON.parse(text)
+    }
+  }
+
+  const postChatRequest = (url: string | URL, body: string | Uint8Array) => {
     try {
       const path = getPath(url)
       if (!isPlatformChatRequest(platform, path)) {
@@ -32,7 +53,8 @@ const innerScript = () => {
         {
           type: WINDOW_MESSAGE_TYPE.AI_CHAT_REQUEST,
           payload: {
-            body: JSON.parse(bodyText),
+            // TODO 使用原始 body
+            body: parseRequestBody(platform, body),
             timestamp: Date.now(),
             platform,
           },
@@ -46,12 +68,18 @@ const innerScript = () => {
     }
   }
 
+  // TODO url 一定存在
+  const tryPostChatRequest = (url: string | URL | undefined, body: unknown) => {
+    //  TODO 只判断 body 不存在的情况
+    if (url && isInterceptableBody(body)) {
+      postChatRequest(url, body)
+    }
+  }
+
   // 拦截 XMLHttpRequest
   const originalSend = XMLHttpRequest.prototype.send
   XMLHttpRequest.prototype.send = function (body: XMLHttpRequestBodyInit | null | undefined) {
-    if (this._url && body && typeof body === 'string') {
-      postChatRequest(this._url, body)
-    }
+    tryPostChatRequest(this._url, body)
     return originalSend.call(this, body)
   }
 
@@ -67,10 +95,7 @@ const innerScript = () => {
   window.fetch = function (input: RequestInfo | URL, init?: RequestInit) {
     const url =
       typeof input === 'string' ? input : input instanceof Request ? input.url : input.toString()
-    const body = init?.body
-    if (typeof body === 'string') {
-      postChatRequest(url, body)
-    }
+    tryPostChatRequest(url, init?.body)
     return originalFetch.call(this, input, init)
   }
 }

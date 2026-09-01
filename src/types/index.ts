@@ -13,6 +13,7 @@ export enum Platform {
   yiyan = 'yiyan',
   chatglm = 'chatglm',
   doubao = 'doubao',
+  kimi = 'kimi',
   unknown = 'unknown',
 }
 export interface StorePayload {

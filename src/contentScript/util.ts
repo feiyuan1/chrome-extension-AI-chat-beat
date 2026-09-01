@@ -60,6 +60,8 @@ export function isPlatformChatRequest(platform: Platform, path: string): boolean
       return path.includes('/backend-api/assistant/stream')
     case Platform.doubao:
       return path.includes('/chat/completion')
+    case Platform.kimi:
+      return path.includes('/apiv2/kimi.gateway.chat.v1.ChatService/Chat')
     default:
       return false
   }

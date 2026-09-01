@@ -3,6 +3,7 @@ import { AdaptResult } from '../../types/adapter'
 import * as ChatGLMAdapter from './chatglm'
 import * as DeepseekAdapter from './deepseek'
 import * as DoubaoAdapter from './doubao'
+import * as KimiAdapter from './kimi'
 import * as QianwenAdapter from './qianwen'
 import * as YuanbaoAdapter from './yuanbao'
 import * as YiyanAdapter from './yiyan'
@@ -21,6 +22,8 @@ export function getPlatformChatAdapter(platform: Platform): (data: any) => Adapt
       return ChatGLMAdapter.ChatDataAdapter
     case Platform.doubao:
       return DoubaoAdapter.ChatDataAdapter
+    case Platform.kimi:
+      return KimiAdapter.ChatDataAdapter
     default:
       throw new Error(`unsupported platform: ${platform}`)
   }
