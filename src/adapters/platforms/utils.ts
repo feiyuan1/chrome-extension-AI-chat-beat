@@ -6,7 +6,7 @@ export const PLATFORM_HOSTS: Record<Platform, string[]> = {
   [Platform.yuanbao]: ['yuanbao.tencent.com'],
   [Platform.qianwen]: ['www.qianwen.com'],
   [Platform.yiyan]: ['wenxin.baidu.com'],
-  [Platform.chatglm]: ['www.chatglm.cn'],
+  [Platform.chatglm]: ['www.chatglm.cn', 'chatglm.cn'],
   [Platform.doubao]: ['www.doubao.com'],
   [Platform.kimi]: ['www.kimi.com'],
   [Platform.unknown]: [],
