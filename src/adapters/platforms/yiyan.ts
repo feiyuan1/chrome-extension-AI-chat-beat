@@ -1,6 +1,11 @@
 import { Platform, StorePayload } from '../../types'
 import { AdaptResult } from '../../types/adapter'
-import { createAdapterErrorBoundary, createPlatformError, createSuccess } from './utils'
+import {
+  createAdapterErrorBoundary,
+  createPlatformError,
+  createSuccess,
+  parseChatRequestBody,
+} from './utils'
 
 const platformError = createPlatformError(Platform.yiyan)
 
@@ -11,7 +16,8 @@ export const ChatDataAdapter = createAdapterErrorBoundary<AdaptResult<StorePaylo
       return platformError('ChatDataAdapter required an object')
     }
 
-    const query = data.body?.message?.query
+    const body = parseChatRequestBody(Platform.yiyan, data.body)
+    const query = body.message?.query
     if (!Array.isArray(query) || query.length === 0) {
       return platformError('missing required field: message.query')
     }

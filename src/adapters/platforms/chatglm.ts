@@ -4,6 +4,7 @@ import {
   createAdapterErrorBoundary,
   createPlatformError,
   createSuccess,
+  parseChatRequestBody,
 } from './utils'
 
 const platformError = createPlatformError(Platform.chatglm)
@@ -15,7 +16,8 @@ export const ChatDataAdapter = createAdapterErrorBoundary<AdaptResult<StorePaylo
       return platformError('ChatDataAdapter required an object')
     }
 
-    const messages = data.body?.messages
+    const body = parseChatRequestBody(Platform.chatglm, data.body)
+    const messages = body.messages
     if (!Array.isArray(messages) || messages.length === 0) {
       return platformError('missing required field: messages')
     }

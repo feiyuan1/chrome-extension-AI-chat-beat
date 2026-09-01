@@ -22,6 +22,17 @@ export function detectPlatform(url: string | URL): Platform {
   return Platform.unknown
 }
 
+export function parseChatRequestBody(platform: Platform, body: unknown): any {
+  if (typeof body === 'string') {
+    return JSON.parse(body)
+  }
+  if (body instanceof Uint8Array) {
+    const text = new TextDecoder().decode(body)
+    return JSON.parse(text)
+  }
+  throw new Error(`unsupported body type for platform: ${platform}`)
+}
+
 export function createPlatformError(platform: Platform) {
   return function (message: unknown): AdaptError {
     return {
