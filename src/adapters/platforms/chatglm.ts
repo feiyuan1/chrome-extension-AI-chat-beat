@@ -32,7 +32,7 @@ export const ChatDataAdapter = createAdapterErrorBoundary<AdaptResult<StorePaylo
     )
 
     if (!item) {
-      return platformError('no valid text content found')
+      return platformError('no valid prompt found')
     }
 
     return createSuccess({

@@ -59,7 +59,7 @@ export const ChatDataAdapter = createAdapterErrorBoundary<AdaptResult<StorePaylo
 
     const prompt = extractUserPrompt(body.messages)
     if (!prompt) {
-      return platformError('no valid user prompt found')
+      return platformError('no valid prompt found')
     }
 
     return createSuccess({

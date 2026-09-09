@@ -50,7 +50,7 @@ export const ChatDataAdapter = createAdapterErrorBoundary<AdaptResult<StorePaylo
     })
 
     if (!message) {
-      return platformError('no valid text message found')
+      return platformError('no valid prompt found')
     }
 
     const textBlock = message.content_block.find((block: any) =>
