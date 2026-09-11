@@ -28,7 +28,8 @@
     "preview": "vite preview",
     "fmt": "prettier --write '**/*.{ts,json,css,scss,md}'",
     "zip": "npm run build && node src/zip.js",
-    "test": "npx playwright test"
+    "test": "npx playwright test",
+    "test-browser-inspect": "npx playwright test ./.tests/browser-inspect/ "
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.26",

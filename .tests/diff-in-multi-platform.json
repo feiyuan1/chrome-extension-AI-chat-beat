@@ -1,0 +1,373 @@
+{
+  "session": {
+    "name": "AI_chat_beat_playwright",
+    "browser": "chrome",
+    "headed": true,
+    "loginCompleted": true
+  },
+  "platforms": [
+    {
+      "platform": "deepseek",
+      "pageHost": "https://chat.deepseek.com/",
+      "loginVerified": true,
+      "selectors": {
+        "promptInput": {
+          "type": "css",
+          "selector": "textarea[name=\"search\"]"
+        },
+        "fileUpload": {
+          "type": "css",
+          "selector": "input[type=\"file\"]",
+          "accepts": "文件和图片",
+          "multiple": true
+        },
+        "imageUpload": {
+          "type": "css",
+          "selector": "input[type=\"file\"]",
+          "accepts": "图片及多种文件类型",
+          "multiple": true,
+          "sameAs": "fileUpload"
+        },
+        "addAttachment": {
+          "type": "playwright-css",
+          "selector": "div:has(> input[type=\"file\"]) > div[role=\"button\"]"
+        },
+        "submit": {
+          "type": "playwright-css",
+          "selector": "div:has(> textarea[name=\"search\"]) ~ div div.ds-button--primary[role=\"button\"]"
+        }
+      },
+      "uploadSuccess": {
+        "file": {
+          "type": "playwright-css",
+          "selector": "[class*=\"file\"]:has-text(\".json\")"
+        },
+        "image": {
+          "type": "css",
+          "selector": "img[alt=\"image.png\"]"
+        }
+      },
+      "notes": [
+        "DeepSeek 当前使用一个统一的文件选择器，同时支持文件和图片。",
+        "页面运行时生成的 class 名包含哈希，因此未使用完整哈希 class 作为主要定位条件。",
+        "uploadSuccess 优先使用 class/aria 等属性选择器"
+      ]
+    },
+    {
+      "platform": "yuanbao",
+      "pageHost": "https://yuanbao.tencent.com/",
+      "loginVerified": true,
+      "selectors": {
+        "promptInput": {
+          "type": "css",
+          "selector": ".ql-editor[contenteditable=\"true\"][data-placeholder=\"输入问题或任务\"]"
+        },
+        "fileUpload": {
+          "type": "playwright-css",
+          "selector": "[role=\"menuitem\"]:has-text(\"本地文件\")",
+          "requires": "先点击 addAttachment"
+        },
+        "imageUpload": {
+          "type": "playwright-css",
+          "selector": "[role=\"menuitem\"]:has-text(\"上传图片\")",
+          "requires": "先点击 addAttachment"
+        },
+        "addAttachment": {
+          "type": "css",
+          "selector": "button[data-new-input-control=\"add-tools-trigger\"][aria-label=\"添加\"]"
+        },
+        "submit": {
+          "type": "css",
+          "selector": "#yuanbao-send-btn[aria-label=\"发送\"]"
+        }
+      },
+      "uploadSuccess": {
+        "file": {
+          "type": "css",
+          "selector": "[class*=\"file-card\"]"
+        },
+        "image": {
+          "type": "css",
+          "selector": "[aria-label*=\"预览图片\"]"
+        }
+      },
+      "menuItems": ["联网搜索", "上传图片", "本地文件", "腾讯文档"],
+      "notes": [
+        "当前页面初始 DOM 中未发现 input[type=file]。",
+        "选择上传图片或本地文件后，平台通过菜单项触发文件选择器。"
+      ]
+    },
+    {
+      "platform": "qianwen",
+      "pageHost": "https://www.qianwen.com/",
+      "loginVerified": true,
+      "selectors": {
+        "promptInput": {
+          "type": "css",
+          "selector": "[role=\"textbox\"][contenteditable=\"true\"][data-slate-editor=\"true\"]"
+        },
+        "fileUpload": {
+          "type": "playwright-css",
+          "selector": "[role=\"menuitem\"]:has-text(\"上传文档\")",
+          "requires": "先点击 addAttachment"
+        },
+        "imageUpload": {
+          "type": "playwright-css",
+          "selector": "[role=\"menuitem\"]:has-text(\"上传图片\")",
+          "requires": "先点击 addAttachment"
+        },
+        "addAttachment": {
+          "type": "css",
+          "selector": "button[aria-label=\"添加附件\"]"
+        },
+        "submit": {
+          "type": "css",
+          "selector": "button[data-session-switch-target=\"send-query\"][aria-label=\"发送消息\"]"
+        }
+      },
+      "uploadSuccess": {
+        "file": {
+          "type": "css",
+          "selector": "[class^=\"fileBox-\"]"
+        },
+        "image": {
+          "type": "css",
+          "selector": "img[alt=\"image.png\"]"
+        }
+      },
+      "menuItems": ["上传文档", "上传图片", "共享屏幕和应用", "截屏提问"],
+      "notes": [
+        "当前页面初始 DOM 中未发现 input[type=file]。",
+        "上传文档和上传图片通过添加附件菜单项触发。"
+      ]
+    },
+    {
+      "platform": "yiyan",
+      "pageHost": "https://wenxin.baidu.com/",
+      "loginVerified": true,
+      "selectors": {
+        "promptInput": {
+          "type": "css",
+          "selector": "#chat-textarea"
+        },
+        "fileUpload": {
+          "type": "css",
+          "selector": "#ci-file-upload-btn"
+        },
+        "imageUpload": {
+          "type": "playwright-css",
+          "selector": ".ci-merge-upload-popover .ci-merge-upload-item:has-text(\"上传文件或图片\")"
+        },
+        "addAttachment": {
+          "type": "css",
+          "selector": "#ci-merge-upload-btn"
+        },
+        "submit": {
+          "type": "css",
+          "selector": "#ci-submit-button-ai"
+        }
+      },
+      "uploadSuccess": {
+        "image": {
+          "type": "css",
+          "selector": ".ci-file-container .ci-image-bg"
+        }
+      },
+      "notes": [
+        "文心一言原配置中的 #ci-file-upload-btn 和 #ci-image-upload-btn 当前均不存在。",
+        "文件和图片使用统一的 #ci-merge-upload-btn 入口，点击后选择“上传文件或图片”。",
+        "图片测试上传成功；JSON 测试上传显示失败，因此未添加文件上传成功标识。"
+      ]
+    },
+    {
+      "platform": "chatglm",
+      "pageHost": "https://www.chatglm.cn",
+      "loginVerified": true,
+      "selectors": {
+        "promptInput": {
+          "type": "css",
+          "selector": ".search-box-container textarea.scroll-display-none"
+        },
+        "fileUpload": {
+          "type": "css",
+          "selector": ".upload-demo input.el-upload__input[type=\"file\"]",
+          "multiple": true
+        },
+        "imageUpload": {
+          "type": "css",
+          "selector": ".search-box-container input.img-input[type=\"file\"]",
+          "accept": ".wbmp,.gif,.jpeg,.png,.jpg,.webp",
+          "multiple": false
+        },
+        "addAttachment": {
+          "type": "css",
+          "selector": ".upload-image-btn-container"
+        },
+        "submit": {
+          "type": "css",
+          "selector": "#search-input-box .enter.is-main-chat"
+        }
+      },
+      "uploadSuccess": {
+        "file": {
+          "type": "css",
+          "selector": ".el-upload-list__item"
+        },
+        "image": {
+          "type": "playwright-css",
+          "selector": ":nth-match(.conversation.question .user-img, 1)"
+        }
+      },
+      "notes": [
+        "ChatGLM 的主要输入区提供图片上传按钮。",
+        "本地文件上传使用 Element UI 风格的隐藏 input。",
+        "页面还存在一个头像上传 input：input[type=file][accept*=\".svg\"]，不应作为聊天附件选择器使用。"
+      ]
+    },
+    {
+      "platform": "doubao",
+      "pageHost": "https://www.doubao.com",
+      "loginVerified": true,
+      "selectors": {
+        "promptInput": {
+          "type": "css",
+          "selector": ".guidance-input-surface [contenteditable=\"true\"][role=\"textbox\"].tiptap.ProseMirror"
+        },
+        "fileUpload": {
+          "type": "css",
+          "selector": ".guidance-input-surface input[type=\"file\"][accept=\".pdf,.txt,.csv,.docx,.doc,.xlsx,.xls,.pptx,.ppt,.md,.mobi,.epub,.png,.jpeg,.jpg,.webp\"]",
+          "accepts": "文档和图片",
+          "multiple": true
+        },
+        "imageUpload": {
+          "type": "css",
+          "selector": ".guidance-input-actions [class*=\"relative flex h-36 w-36\"] input[type=\"file\"]",
+          "accepts": "图片",
+          "multiple": true,
+          "sameAs": "fileUpload"
+        },
+        "addAttachment": {
+          "type": "css",
+          "selector": ".guidance-input-actions [class*=\"relative flex h-36 w-36\"] button"
+        },
+        "submit": {
+          "type": "css",
+          "selector": "#flow-end-msg-send"
+        }
+      },
+      "uploadSuccess": {
+        "file": {
+          "type": "css",
+          "selector": "[class*=\"file-card\"]"
+        },
+        "image": {
+          "type": "css",
+          "selector": "img[alt=\"image\"]"
+        }
+      },
+      "menuItems": ["上传文件或图片"],
+      "notes": [
+        "addAttachment 原选择器匹配 2 个元素；已限定为输入区域中未展开的第一个下拉菜单触发按钮。",
+        "豆包当前使用统一文件 input，同时接受文档和图片。"
+      ]
+    },
+    {
+      "platform": "kimi",
+      "pageHost": "https://www.kimi.com",
+      "loginVerified": true,
+      "selectors": {
+        "promptInput": {
+          "type": "css",
+          "selector": ".chat-input-editor[contenteditable=\"true\"][role=\"textbox\"]"
+        },
+        "fileUpload": {
+          "type": "css",
+          "selector": "label.toolkit-item[role=\"menuitem\"] input.hidden-input[type=\"file\"]",
+          "accepts": "文本、代码、文档、图片、音视频等",
+          "multiple": true,
+          "requires": "先点击 addAttachment 并打开文件和图片菜单"
+        },
+        "imageUpload": {
+          "type": "css",
+          "selector": "label.toolkit-item[role=\"menuitem\"] input.hidden-input[type=\"file\"]",
+          "accepts": "图片及其他支持的附件类型",
+          "multiple": true,
+          "sameAs": "fileUpload"
+        },
+        "addAttachment": {
+          "type": "css",
+          "selector": ".chat-editor-action .toolkit-trigger-btn[aria-haspopup=\"menu\"]"
+        },
+        "fileAndImageMenuItem": {
+          "type": "playwright-css",
+          "selector": "label[role=\"menuitem\"]:has-text(\"文件和图片\")"
+        },
+        "submit": {
+          "type": "css",
+          "selector": ".chat-editor .send-button-container"
+        }
+      },
+      "uploadSuccess": {
+        "file": {
+          "type": "css",
+          "selector": ".file-card-container.success"
+        },
+        "image": {
+          "type": "css",
+          "selector": "[data-testid=\"input-attachment-list\"] .image-thumbnail"
+        }
+      },
+      "notes": [
+        "Kimi 将文件和图片合并到同一个“文件和图片”菜单项。",
+        "未发现独立的图片上传 input；选择菜单后才挂载统一的 hidden input。",
+        "页面中可能存在侧边栏的“添加 Claw”按钮，不应作为聊天附件按钮使用。"
+      ]
+    },
+    {
+      "platform": "chatgpt",
+      "pageHost": "https://chatgpt.com/",
+      "loginVerified": true,
+      "selectors": {
+        "promptInput": {
+          "type": "css",
+          "selector": "#prompt-textarea[contenteditable=\"true\"][role=\"textbox\"]"
+        },
+        "fileUpload": {
+          "type": "css",
+          "selector": "#upload-files[type=\"file\"]",
+          "multiple": true
+        },
+        "imageUpload": {
+          "type": "css",
+          "selector": "#upload-photos[type=\"file\"]",
+          "accept": "image/*",
+          "multiple": true
+        },
+        "addAttachment": {
+          "type": "css",
+          "selector": "#composer-plus-btn[data-testid=\"composer-plus-btn\"]"
+        },
+        "submit": {
+          "type": "css",
+          "selector": "#composer-submit-button[data-testid=\"send-button\"]"
+        }
+      },
+      "uploadSuccess": {
+        "file": {
+          "type": "css",
+          "selector": "[aria-label^=\"移除文件\"]"
+        },
+        "image": {
+          "type": "css",
+          "selector": "button[aria-label^=\"打开图片\"]:not([disabled])"
+        }
+      },
+      "notes": [
+        "ChatGPT 的普通文件上传使用 #upload-files。",
+        "图片上传使用 #upload-photos；移动端或相机入口使用 #upload-camera。",
+        "上传菜单按钮的可访问名称为“添加文件等”。",
+        "#prompt-textarea 在页面 hydration 完成后可定位。"
+      ]
+    }
+  ]
+}

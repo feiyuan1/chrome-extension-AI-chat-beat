@@ -1,0 +1,26 @@
+{
+  "deepseek": {
+    "session_url": "https://chat.deepseek.com/a/chat/s/12087204-b6a2-4d01-bf1a-9747fb8657cf"
+  },
+  "yuanbao": {
+    "session_url": "https://yuanbao.tencent.com/chat/naQivTmsDa/0QI0mKazESe"
+  },
+  "qianwen": {
+    "session_url": "https://www.qianwen.com/chat/6376ec2cb6a9403a90596a4b52d1fab6"
+  },
+  "yiyan": {
+    "session_url": "https://wenxin.baidu.com/search/11072560470547427892?enter_type=chat_url"
+  },
+  "chatglm": {
+    "session_url": "https://www.chatglm.cn/main/alltoolsdetail?lang=zh&cid=6aa0c3858f48e1e4b8f80064"
+  },
+  "doubao": {
+    "session_url": "https://www.doubao.com/chat/38426313126690306"
+  },
+  "kimi": {
+    "session_url": "https://www.kimi.com/chat/1a084010-ab92-8a4f-8000-09650db146b3?chat_enter_method=home"
+  },
+  "chatgpt": {
+    "session_url": "https://chatgpt.com/c/6a93cd10-1900-83e8-8f23-a0f3abb6a4da"
+  }
+}

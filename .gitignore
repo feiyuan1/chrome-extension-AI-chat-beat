@@ -28,3 +28,12 @@ secrets.*.js
 /config/label-model.local.json
 /src/constants/cypto-key.ts
 src/types/cypto/**
+# Playwright CLI output (may contain credentials)
+.playwright-cli/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

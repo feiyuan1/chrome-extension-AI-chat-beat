@@ -22,6 +22,7 @@
   "references": [
     { "path": "./tsconfig.node.json" },
     { "path": "./tsconfig.dev.json" },
-    { "path": "./tsconfig.monitor.json" }
+    { "path": "./tsconfig.monitor.json" },
+    { "path": "./tsconfig.playwright.json" }
   ]
 }
