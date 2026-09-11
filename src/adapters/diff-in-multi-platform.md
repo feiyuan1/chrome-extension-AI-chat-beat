@@ -3,6 +3,10 @@
 - adapter
   - prompt undefined 抛出异常
 
+## page host
+
+https://chat.deepseek.com/
+
 # 元宝✅️
 
 ## api
@@ -134,7 +138,7 @@ https://gemini.google.com
 
 ## create or edit
 
-# chatgpt❌️
+# chatgpt✅️
 
 ## api
 

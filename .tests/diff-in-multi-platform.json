@@ -28,10 +28,7 @@
           "multiple": true,
           "sameAs": "fileUpload"
         },
-        "addAttachment": {
-          "type": "playwright-css",
-          "selector": "div:has(> input[type=\"file\"]) > div[role=\"button\"]"
-        },
+        "addAttachment": null,
         "submit": {
           "type": "playwright-css",
           "selector": "div:has(> textarea[name=\"search\"]) ~ div div.ds-button--primary[role=\"button\"]"
