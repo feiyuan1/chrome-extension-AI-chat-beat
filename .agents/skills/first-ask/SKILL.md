@@ -27,6 +27,12 @@ After refining and before carrying out the task:
 
 After gathering sufficient information, and having a clear understanding of the task:
 
-1. Show your plan to the user with redundancy kept to a minimum
-2. Create a todo list
-3. Get to work!
+1. Show your mvp plan to the user with redundancy kept to a minimum
+2. Break down the overall plan into distinct, single-purpose tasks. Save each task as an individual Markdown file inside the `tasks/` directory in the current workspace
+3. Every task file MUST strictly adhere to the following structure:
+
+- Task title and task file name matching the format `[N]-<Title>`
+- List of specific file paths to be created, modified, or referenced
+- List of concrete, clear, and actionable steps.
+
+4. Ask the user would like to proceed the plan
