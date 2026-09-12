@@ -192,7 +192,7 @@
         },
         "imageUpload": {
           "type": "css",
-          "selector": ".search-box-container input.img-input[type=\"file\"]",
+          "selector": ".upload-demo input.el-upload__input[type=\"file\"]",
           "accept": ".wbmp,.gif,.jpeg,.png,.jpg,.webp",
           "multiple": false
         },
@@ -212,7 +212,7 @@
         },
         "image": {
           "type": "playwright-css",
-          "selector": ":nth-match(.conversation.question .user-img, 1)"
+          "selector": ".image-preview"
         }
       },
       "notes": [
